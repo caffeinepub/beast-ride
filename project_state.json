@@ -1,0 +1,297 @@
+{
+  "schemaVersion": "1.0.0",
+  "projectStateVersion": 7,
+  "summary": "Building a high-performance BEAST RIDE storefront web app with cinematic dark theme (black/red/silver), aggressive styling, product carousels, cart drawer, collection pages, micro-interactions, and parallax effects as a React + TypeScript ICP application. Now expanding with an Admin Dashboard featuring Order Management, Product Listing Management, and Category/Collection Management.",
+  "architectural_notes": [
+    "Built as React + TypeScript ICP application (not a Shopify Liquid theme)",
+    "Color system: background #0B0B0B, accent red #D10000, silver #C9C9C9, alternate bg #111111",
+    "Red used sparingly: buttons, active states, borders, underlines only — black dominates",
+    "Typography: bold/wide/aggressive condensed headings, clean sans-serif body, uppercase buttons with letter-spacing 1.5px",
+    "Buttons use sharp angled clip-path polygon (claw shape) with red glow on hover",
+    "Admin Dashboard added with Order Management, Product Listing Management, and Category/Collection Management sections"
+  ],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [
+    {
+      "id": "feature-implement-a-global-design-system-with-base-background-0b0b0b-alternate-section-background-111111-accent-red-d10000-hover-red-glow-rgba-209-0-0-0-4-metal-text-gradient-linear-gradient-180deg-ffffff-bfbfbf-subtle-border-rgba-255-255-255-0-08-headings-must-be-bold-wide-slightly-condensed-body-text-clean-modern-sans-serif-all-buttons-uppercase-with-letter-spacing-1-5px-and-sharp-angled-clip-path-polygon-edges-smooth-scroll-and-subtle-parallax-behavior-throughout",
+      "title": "Implement a global design system with base background #0B0B0B, alternate section background #111111, accent red #D10000, hover red glow rgba(209,0,0,0.4), metal text gradient linear-gradient(180deg,#ffffff,#bfbfbf), subtle border rgba(255,255,255,0.08). Headings must be bold, wide, slightly condensed. Body text clean modern sans-serif. All buttons uppercase with letter-spacing 1.5px and sharp angled clip-path polygon edges. Smooth scroll and subtle parallax behavior throughout.",
+      "reqIds": [
+        "REQ-1"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-homepage-hero-section-at-85vh-full-width-with-a-cinematic-motion-blur-bike-car-background-image-overlay-is-a-subtle-20-opacity-black-gradient-left-side-displays-large-heading-ride-the-beast-subtext-performance-accessories-built-for-power-and-a-sharp-angled-red-cta-button-labeled-shop-performance-the-button-has-an-animated-red-light-sweep-passing-through-it-every-6-seconds-a-subtle-animated-red-radial-glow-sits-behind-the-center-of-the-hero-background",
+      "title": "Build the homepage Hero Section at 85vh full width with a cinematic motion-blur bike/car background image. Overlay is a subtle 20% opacity black gradient. Left side displays large heading 'RIDE THE BEAST', subtext 'Performance Accessories Built for Power.', and a sharp angled red CTA button labeled 'SHOP PERFORMANCE'. The button has an animated red light sweep passing through it every 6 seconds. A subtle animated red radial glow sits behind the center of the hero background.",
+      "reqIds": [
+        "REQ-2"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-category-split-section-below-the-hero-with-two-large-side-by-side-cards-labeled-bike-accessories-and-car-performance-on-hover-each-card-image-zooms-slightly-a-red-border-animates-in-and-the-title-shifts-5px-to-the-right-dark-background-separates-sections",
+      "title": "Build a Category Split Section below the hero with two large side-by-side cards labeled 'BIKE ACCESSORIES' and 'CAR PERFORMANCE'. On hover each card: image zooms slightly, a red border animates in, and the title shifts 5px to the right. Dark background separates sections.",
+      "reqIds": [
+        "REQ-3"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-horizontal-featured-products-carousel-with-a-center-focus-effect-the-center-product-scales-to-1-1-side-products-scale-to-0-85-with-smooth-transitions-under-the-active-product-show-product-name-price-in-silver-and-a-small-sharp-red-add-to-cart-button-the-carousel-background-has-a-subtle-moving-dark-gradient-to-create-a-motion-illusion-use-mock-product-data-stored-in-the-backend",
+      "title": "Build a Horizontal Featured Products carousel with a center-focus effect. The center product scales to 1.1, side products scale to 0.85 with smooth transitions. Under the active product show product name, price in silver, and a small sharp red 'Add to Cart' button. The carousel background has a subtle moving dark gradient to create a motion illusion. Use mock product data stored in the backend.",
+      "reqIds": [
+        "REQ-4"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-performance-highlight-section-on-a-111-dark-graphite-background-with-three-columns-engineered-for-speed-built-to-last-rider-approved-each-column-has-an-icon-with-a-red-stroke-outline-only-not-filled-on-hover-a-red-glow-appears-behind-the-icon",
+      "title": "Build a Performance Highlight Section on a #111 dark graphite background with three columns: 'Engineered for Speed', 'Built to Last', 'Rider Approved'. Each column has an icon with a red stroke outline only (not filled). On hover a red glow appears behind the icon.",
+      "reqIds": [
+        "REQ-5"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-cinematic-parallax-section-with-a-full-width-night-road-image-background-centered-text-reads-dominate-the-road-a-minimal-red-underline-animation-draws-from-left-to-right-beneath-the-text-on-scroll-into-view",
+      "title": "Build a Cinematic Parallax Section with a full-width night road image background. Centered text reads 'DOMINATE THE ROAD'. A minimal red underline animation draws from left to right beneath the text on scroll into view.",
+      "reqIds": [
+        "REQ-6"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-reviews-section-with-dark-minimal-cards-each-card-has-a-black-background-thin-silver-border-red-star-ratings-reviewer-name-and-review-text-cards-show-slight-elevation-on-hover",
+      "title": "Build a Reviews Section with dark minimal cards. Each card has a black background, thin silver border, red star ratings, reviewer name, and review text. Cards show slight elevation on hover.",
+      "reqIds": [
+        "REQ-7"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-an-instagram-community-section-with-a-dark-grid-layout-of-images-on-hover-each-image-zooms-slightly-and-a-red-overlay-with-a-centered-icon-fades-in",
+      "title": "Build an Instagram/Community Section with a dark grid layout of images. On hover each image zooms slightly and a red overlay with a centered icon fades in.",
+      "reqIds": [
+        "REQ-8"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-footer-with-a-centered-beast-ride-logo-at-top-three-columns-shop-support-social-with-link-lists-minimal-outline-social-icons-and-a-very-subtle-red-top-border-line-background-is-deep-black",
+      "title": "Build a Footer with a centered BEAST RIDE logo at top, three columns (Shop, Support, Social) with link lists, minimal outline social icons, and a very subtle red top border line. Background is deep black.",
+      "reqIds": [
+        "REQ-9"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-product-detail-page-with-dark-minimal-layout-left-side-shows-a-large-product-image-right-side-shows-product-title-with-silver-gradient-price-in-red-short-description-a-custom-styled-black-quantity-selector-with-silver-border-and-a-large-sharp-angled-red-add-to-cart-button-below-the-fold-tabbed-interface-with-description-specifications-and-shipping-tabs-tab-underline-animates-on-switch-below-tabs-a-you-may-also-like-horizontal-scroll-of-related-products",
+      "title": "Build a Product Detail Page with dark minimal layout. Left side shows a large product image. Right side shows product title with silver gradient, price in red, short description, a custom-styled black quantity selector with silver border, and a large sharp angled red 'Add to Cart' button. Below the fold: tabbed interface with Description, Specifications, and Shipping tabs (tab underline animates on switch). Below tabs: a 'You May Also Like' horizontal scroll of related products.",
+      "reqIds": [
+        "REQ-10"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-collection-shop-page-with-a-3-column-desktop-grid-of-product-cards-each-card-has-a-black-background-and-thin-silver-border-on-hover-image-zooms-5-and-a-red-bottom-border-line-animates-in-left-sidebar-has-a-filter-panel-with-dark-background-silver-headings-and-red-highlight-on-active-filter",
+      "title": "Build a Collection/Shop Page with a 3-column desktop grid of product cards. Each card has a black background and thin silver border. On hover: image zooms 5% and a red bottom border line animates in. Left sidebar has a filter panel with dark background, silver headings, and red highlight on active filter.",
+      "reqIds": [
+        "REQ-11"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-a-cart-drawer-that-slides-in-from-the-right-background-is-111111-a-close-icon-sits-top-right-product-list-is-minimal-with-item-name-price-and-quantity-controls-subtotal-displays-in-silver-checkout-button-is-large-and-red-a-small-animated-progress-bar-shows-free-shipping-unlock-progress",
+      "title": "Build a Cart Drawer that slides in from the right. Background is #111111. A close icon sits top right. Product list is minimal with item name, price, and quantity controls. Subtotal displays in silver. Checkout button is large and red. A small animated progress bar shows free shipping unlock progress.",
+      "reqIds": [
+        "REQ-12"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-implement-global-micro-interactions-and-header-behavior-button-hover-glow-effect-smooth-scroll-image-hover-zoom-subtle-section-fade-in-on-scroll-into-viewport-header-shrinks-on-scroll-header-is-transparent-over-the-hero-and-turns-solid-black-when-scrolling-down-menu-items-are-white-active-hover-nav-items-show-an-animated-red-underline",
+      "title": "Implement global micro-interactions and header behavior: button hover glow effect, smooth scroll, image hover zoom (subtle), section fade-in on scroll into viewport, header shrinks on scroll, header is transparent over the hero and turns solid black when scrolling down, menu items are white, active/hover nav items show an animated red underline.",
+      "reqIds": [
+        "REQ-13"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-apply-a-fully-responsive-mobile-experience-hero-height-70vh-on-mobile-all-buttons-full-width-on-mobile-carousel-supports-swipe-gestures-navigation-slides-in-from-the-left-on-mobile-animations-remain-smooth-but-not-heavy-on-mobile",
+      "title": "Apply a fully responsive mobile experience: hero height 70vh on mobile, all buttons full width on mobile, carousel supports swipe gestures, navigation slides in from the left on mobile. Animations remain smooth but not heavy on mobile.",
+      "reqIds": [
+        "REQ-15"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-an-admin-dashboard-page-at-route-admin-in-the-react-frontend-the-page-must-be-protected-behind-a-simple-admin-check-e-g-only-accessible-when-authenticated-via-internet-identity-the-dashboard-has-a-dark-sidebar-with-nav-links-to-three-sections-orders-products-and-categories-collections-the-sidebar-uses-the-beast-ride-design-system-0b0b0b-background-red-accent-d10000-silver-metal-text-uppercase-letter-spacing-labels",
+      "title": "Build an Admin Dashboard page at route /admin in the React frontend. The page must be protected behind a simple admin check (e.g. only accessible when authenticated via Internet Identity). The dashboard has a dark sidebar with nav links to three sections: Orders, Products, and Categories & Collections. The sidebar uses the Beast Ride design system: #0B0B0B background, red accent #D10000, silver/metal text, uppercase letter-spacing labels.",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-orders-admin-section-within-the-admin-dashboard-display-a-full-width-dark-table-listing-all-orders-with-columns-order-id-customer-items-total-status-created-date-each-row-has-a-status-badge-colored-by-state-pending-yellow-confirmed-blue-shipped-orange-delivered-green-cancelled-grey-each-row-has-a-dropdown-or-button-to-update-the-order-status-include-a-status-filter-bar-at-the-top-to-filter-orders-by-status-fetch-data-using-a-react-query-hook-calling-the-backend-getallorders-and-updateorderstatus-functions",
+      "title": "Build the Orders admin section within the Admin Dashboard. Display a full-width dark table listing all orders with columns: Order ID, Customer, Items, Total, Status, Created Date. Each row has a status badge colored by state (Pending=yellow, Confirmed=blue, Shipped=orange, Delivered=green, Cancelled=grey). Each row has a dropdown or button to update the order status. Include a status filter bar at the top to filter orders by status. Fetch data using a React Query hook calling the backend getAllOrders and updateOrderStatus functions.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-products-admin-section-within-the-admin-dashboard-display-a-dark-table-grid-of-all-products-with-columns-image-thumbnail-name-category-price-inventory-actions-edit-delete-include-an-add-product-button-sharp-angled-red-uppercase-that-opens-a-modal-form-with-fields-name-price-description-category-dropdown-image-url-inventory-the-edit-button-opens-the-same-form-pre-filled-the-delete-button-shows-a-confirmation-prompt-before-removing-all-mutations-call-the-backend-addproduct-updateproduct-deleteproduct-functions-and-invalidate-the-products-query-on-success",
+      "title": "Build the Products admin section within the Admin Dashboard. Display a dark table/grid of all products with columns: Image thumbnail, Name, Category, Price, Inventory, Actions (Edit/Delete). Include an 'Add Product' button (sharp angled red, uppercase) that opens a modal/form with fields: Name, Price, Description, Category (dropdown), Image URL, Inventory. The Edit button opens the same form pre-filled. The Delete button shows a confirmation prompt before removing. All mutations call the backend addProduct, updateProduct, deleteProduct functions and invalidate the products query on success.",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-build-the-categories-collections-admin-section-within-the-admin-dashboard-show-two-sub-panels-side-by-side-or-tabbed-on-mobile-one-for-categories-one-for-collections-categories-panel-list-all-categories-with-name-and-slug-add-edit-delete-actions-and-an-inline-form-for-creating-or-editing-a-category-collections-panel-list-all-collections-with-name-and-description-add-edit-delete-actions-clicking-a-collection-expands-it-to-show-assigned-products-with-an-assign-product-dropdown-and-remove-buttons-per-product-all-mutations-call-the-corresponding-backend-functions-and-invalidate-relevant-queries-on-success",
+      "title": "Build the Categories & Collections admin section within the Admin Dashboard. Show two sub-panels side by side (or tabbed on mobile): one for Categories, one for Collections. Categories panel: list all categories with Name and Slug, Add/Edit/Delete actions, and an inline form for creating or editing a category. Collections panel: list all collections with Name and Description, Add/Edit/Delete actions; clicking a collection expands it to show assigned products with an 'Assign Product' dropdown and remove buttons per product. All mutations call the corresponding backend functions and invalidate relevant queries on success.",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
+    }
+  ],
+  "new_feature_requests": [
+    {
+      "id": "AR-1",
+      "summary": "Hero section with cinematic bike/car motion blur background, 'RIDE THE BEAST' heading, subtext, and sharp angled red CTA button with animated light sweep",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-2",
+      "summary": "Category split section with two large cards (Bike Accessories / Car Performance) with hover zoom, red border animation, and title shift",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-3",
+      "summary": "Horizontal featured products center-focus carousel with scale effect, product name/price/add-to-cart under active product",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-4",
+      "summary": "Performance highlight section with three columns (Engineered for Speed, Built to Last, Rider Approved) and red stroke outlined icons with hover glow",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Cinematic parallax section with full-width night road image, 'DOMINATE THE ROAD' text, and red underline draw animation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Reviews section with dark minimal cards, silver borders, red stars, and hover elevation",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Instagram/community section with dark grid, hover zoom, and red overlay fade-in",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-8",
+      "summary": "Footer with centered logo, three column links (Shop/Support/Social), minimal outline social icons, and subtle red top border",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-9",
+      "summary": "Product page with dark layout, image left, details right, custom quantity selector, sharp red add-to-cart button, tabbed description/specs/shipping, and 'You May Also Like' scroll",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-10",
+      "summary": "Collection page with 3-column grid, dark product cards, silver borders, hover zoom/red bottom line, and filter sidebar",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-11",
+      "summary": "Cart drawer sliding in from right with product list, red checkout button, subtotal, and animated free-shipping progress bar",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-12",
+      "summary": "Global micro-interactions: button hover glow, smooth scroll, section fade-in on scroll, transparent-to-black header on scroll, red underline nav hover",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-26",
+      "summary": "Implement a backend data store in the Motoko actor to hold mock product data (name, price, description, category, image placeholder) and expose query functions for: listing all products, getting a single product by ID, and listing products by category.",
+      "reqIds": [
+        "REQ-14"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-27",
+      "summary": "Redeploy the current BEAST RIDE application as-is, with all existing features and code unchanged, to produce a fresh live deployment.",
+      "reqIds": [
+        "REQ-16"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-28",
+      "summary": "Order Management system: place orders, track status (Pending, Confirmed, Shipped, Delivered, Cancelled), order dashboard, and order timeline in admin panel",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-29",
+      "summary": "Product Listing Management admin panel: add, edit, delete products with fields for name, price, description, category, images, and inventory",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-30",
+      "summary": "Category and Collection Management admin panel: create, edit, delete categories and collections, and assign products to them",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-31",
+      "summary": "Extend the Motoko backend actor to support Order Management: add an Order type with fields (orderId, customerId, items: [{productId, quantity, price}], totalAmount, status: {#pending; #confirmed; #shipped; #delivered; #cancelled}, createdAt, updatedAt). Implement update functions: createOrder, updateOrderStatus. Implement query functions: getAllOrders, getOrderById, getOrdersByStatus. Pre-populate with a few mock orders.",
+      "reqIds": [
+        "REQ-17"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-32",
+      "summary": "Extend the Motoko backend actor to support full Product Listing Management CRUD: add update functions addProduct, updateProduct, deleteProduct that manage products with fields (id, name, price, description, category, imageUrl, inventory: Nat). Existing getProducts, getProductById, getProductsByCategory queries remain intact.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "AR-33",
+      "summary": "Extend the Motoko backend actor to support Category and Collection Management: add a Category type (id, name, slug) and a Collection type (id, name, description, productIds: [Nat]). Implement update functions: addCategory, updateCategory, deleteCategory, addCollection, updateCollection, deleteCollection, assignProductToCollection, removeProductFromCollection. Implement query functions: getAllCategories, getAllCollections, getCollectionById. Pre-populate with Bike Accessories and Car Performance categories.",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "status": "pending"
+    }
+  ],
+  "gameProjectType": "none",
+  "projectName": "BEAST RIDE",
+  "clarification_mode": "instant",
+  "clarification_rounds": 0
+}

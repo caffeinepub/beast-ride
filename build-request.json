@@ -1,0 +1,177 @@
+{
+  "kind": "build_request",
+  "title": "Admin Dashboard: Order Management, Product Listing Management, and Category/Collection Management",
+  "projectName": "Beast Ride",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-17",
+      "text": "Extend the Motoko backend actor to support Order Management: add an Order type with fields (orderId, customerId, items: [{productId, quantity, price}], totalAmount, status: {#pending; #confirmed; #shipped; #delivered; #cancelled}, createdAt, updatedAt). Implement update functions: createOrder, updateOrderStatus. Implement query functions: getAllOrders, getOrderById, getOrdersByStatus. Pre-populate with a few mock orders.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Order Management -- place orders, track status (Pending, Confirmed, Shipped, Delivered)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Order type is defined with all required fields including status variant",
+        "createOrder update function accepts order data and returns a new order ID",
+        "updateOrderStatus update function changes the status of an existing order",
+        "getAllOrders query returns the full list of orders",
+        "getOrderById query returns a single order or null",
+        "getOrdersByStatus query filters orders by status",
+        "Mock orders are pre-populated on initialization"
+      ]
+    },
+    {
+      "id": "REQ-18",
+      "text": "Extend the Motoko backend actor to support full Product Listing Management CRUD: add update functions addProduct, updateProduct, deleteProduct that manage products with fields (id, name, price, description, category, imageUrl, inventory: Nat). Existing getProducts, getProductById, getProductsByCategory queries remain intact.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Product Listing Management -- add, edit, delete products from an admin panel"
+        ]
+      },
+      "acceptanceCriteria": [
+        "addProduct creates a new product and returns its generated ID",
+        "updateProduct modifies an existing product's fields",
+        "deleteProduct removes a product by ID and returns success/failure",
+        "Product type includes an inventory field of type Nat",
+        "All existing query functions continue to work unchanged"
+      ]
+    },
+    {
+      "id": "REQ-19",
+      "text": "Extend the Motoko backend actor to support Category and Collection Management: add a Category type (id, name, slug) and a Collection type (id, name, description, productIds: [Nat]). Implement update functions: addCategory, updateCategory, deleteCategory, addCollection, updateCollection, deleteCollection, assignProductToCollection, removeProductFromCollection. Implement query functions: getAllCategories, getAllCollections, getCollectionById. Pre-populate with Bike Accessories and Car Performance categories.",
+      "target": "backend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Category and Collection Management -- manage categories and group products into collections"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Category and Collection types are defined with all required fields",
+        "CRUD functions for categories and collections are implemented",
+        "assignProductToCollection adds a product ID to a collection's productIds list",
+        "removeProductFromCollection removes a product ID from a collection's productIds list",
+        "getAllCategories returns the pre-populated Bike Accessories and Car Performance entries",
+        "getAllCollections and getCollectionById queries work correctly"
+      ]
+    },
+    {
+      "id": "REQ-20",
+      "text": "Build an Admin Dashboard page at route /admin in the React frontend. The page must be protected behind a simple admin check (e.g. only accessible when authenticated via Internet Identity). The dashboard has a dark sidebar with nav links to three sections: Orders, Products, and Categories & Collections. The sidebar uses the Beast Ride design system: #0B0B0B background, red accent #D10000, silver/metal text, uppercase letter-spacing labels.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "order management",
+          "product listing management",
+          "category and collection management"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Route /admin is added to the React app router",
+        "Dashboard renders a dark sidebar with three navigation items: Orders, Products, Categories & Collections",
+        "Sidebar styling matches the Beast Ride design system (dark background, red accent, silver text, uppercase labels)",
+        "Unauthenticated users see a login prompt or are redirected; authenticated users see the dashboard",
+        "Clicking each sidebar item shows the corresponding admin section in the main content area"
+      ]
+    },
+    {
+      "id": "REQ-21",
+      "text": "Build the Orders admin section within the Admin Dashboard. Display a full-width dark table listing all orders with columns: Order ID, Customer, Items, Total, Status, Created Date. Each row has a status badge colored by state (Pending=yellow, Confirmed=blue, Shipped=orange, Delivered=green, Cancelled=grey). Each row has a dropdown or button to update the order status. Include a status filter bar at the top to filter orders by status. Fetch data using a React Query hook calling the backend getAllOrders and updateOrderStatus functions.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "order management new product listing managemen",
+          "Order Management -- place orders, track status (Pending, Confirmed, Shipped, Delivered)"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Orders table renders all orders fetched from the backend",
+        "Each row shows Order ID, Customer, Items count, Total, Status badge, and Created Date",
+        "Status badges are color-coded per status",
+        "Status filter bar at top filters the visible rows",
+        "Dropdown or button per row allows changing the order status and optimistically updates the UI",
+        "Loading skeleton is shown while data is fetching"
+      ]
+    },
+    {
+      "id": "REQ-22",
+      "text": "Build the Products admin section within the Admin Dashboard. Display a dark table/grid of all products with columns: Image thumbnail, Name, Category, Price, Inventory, Actions (Edit/Delete). Include an 'Add Product' button (sharp angled red, uppercase) that opens a modal/form with fields: Name, Price, Description, Category (dropdown), Image URL, Inventory. The Edit button opens the same form pre-filled. The Delete button shows a confirmation prompt before removing. All mutations call the backend addProduct, updateProduct, deleteProduct functions and invalidate the products query on success.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Product Listing Management -- add, edit, delete products from an admin panel"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Products table lists all products with image thumbnail, name, category, price, inventory, and action buttons",
+        "Add Product button opens a modal form with all required fields",
+        "Form validates required fields (name, price, category) before submission",
+        "Edit button pre-fills the form with the selected product's data",
+        "Delete button shows a confirmation dialog and removes the product on confirm",
+        "React Query cache is invalidated after add, edit, or delete so the table refreshes",
+        "Loading and error states are handled gracefully"
+      ]
+    },
+    {
+      "id": "REQ-23",
+      "text": "Build the Categories & Collections admin section within the Admin Dashboard. Show two sub-panels side by side (or tabbed on mobile): one for Categories, one for Collections. Categories panel: list all categories with Name and Slug, Add/Edit/Delete actions, and an inline form for creating or editing a category. Collections panel: list all collections with Name and Description, Add/Edit/Delete actions; clicking a collection expands it to show assigned products with an 'Assign Product' dropdown and remove buttons per product. All mutations call the corresponding backend functions and invalidate relevant queries on success.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-recent"
+        ],
+        "quotes": [
+          "Category and Collection Management -- manage categories and group products into collections"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Categories panel lists all categories with name and slug",
+        "Add/Edit/Delete controls work for categories and call backend functions",
+        "Collections panel lists all collections",
+        "Clicking a collection shows its assigned products",
+        "Assign Product dropdown lets admin pick a product and add it to the collection",
+        "Remove button unassigns a product from a collection",
+        "All mutations invalidate the relevant React Query caches so lists refresh",
+        "Responsive: panels stack vertically on mobile"
+      ]
+    }
+  ],
+  "constraints": [
+    "All new backend logic must remain in the single Motoko actor file backend/main.mo",
+    "Existing product query functions (getProducts, getProductById, getProductsByCategory) must not be broken",
+    "Immutable frontend paths must not be modified",
+    "Admin route must only be accessible to authenticated Internet Identity users"
+  ],
+  "nonGoals": [
+    "Payment processing or checkout flow changes",
+    "Customer-facing order tracking UI (only admin panel)",
+    "Real image uploads (image URL field is a plain text input)",
+    "Role-based access control beyond Internet Identity authentication check",
+    "Candid UI or canister ID debugging"
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  }
+}

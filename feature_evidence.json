@@ -1,0 +1,91 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-build-an-admin-dashboard-page-at-route-admin-in-the-react-frontend-the-page-must-be-protected-behind-a-simple-admin-check-e-g-only-accessible-when-authenticated-via-internet-identity-the-dashboard-has-a-dark-sidebar-with-nav-links-to-three-sections-orders-products-and-categories-collections-the-sidebar-uses-the-beast-ride-design-system-0b0b0b-background-red-accent-d10000-silver-metal-text-uppercase-letter-spacing-labels",
+      "featureTitle": "Build an Admin Dashboard page at route /admin in the React frontend. The page must be protected behind a simple admin check (e.g. only accessible when authenticated via Internet Identity). The dashboard has a dark sidebar with nav links to three sections: Orders, Products, and Categories & Collections. The sidebar uses the Beast Ride design system: #0B0B0B background, red accent #D10000, silver/metal text, uppercase letter-spacing labels.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/AdminSidebar.tsx",
+        "frontend/src/pages/Admin.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-20"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-orders-admin-section-within-the-admin-dashboard-display-a-full-width-dark-table-listing-all-orders-with-columns-order-id-customer-items-total-status-created-date-each-row-has-a-status-badge-colored-by-state-pending-yellow-confirmed-blue-shipped-orange-delivered-green-cancelled-grey-each-row-has-a-dropdown-or-button-to-update-the-order-status-include-a-status-filter-bar-at-the-top-to-filter-orders-by-status-fetch-data-using-a-react-query-hook-calling-the-backend-getallorders-and-updateorderstatus-functions",
+      "featureTitle": "Build the Orders admin section within the Admin Dashboard. Display a full-width dark table listing all orders with columns: Order ID, Customer, Items, Total, Status, Created Date. Each row has a status badge colored by state (Pending=yellow, Confirmed=blue, Shipped=orange, Delivered=green, Cancelled=grey). Each row has a dropdown or button to update the order status. Include a status filter bar at the top to filter orders by status. Fetch data using a React Query hook calling the backend getAllOrders and updateOrderStatus functions.",
+      "files": [
+        "frontend/src/components/admin/OrdersSection.tsx",
+        "frontend/src/hooks/useMutations.ts",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-21"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-products-admin-section-within-the-admin-dashboard-display-a-dark-table-grid-of-all-products-with-columns-image-thumbnail-name-category-price-inventory-actions-edit-delete-include-an-add-product-button-sharp-angled-red-uppercase-that-opens-a-modal-form-with-fields-name-price-description-category-dropdown-image-url-inventory-the-edit-button-opens-the-same-form-pre-filled-the-delete-button-shows-a-confirmation-prompt-before-removing-all-mutations-call-the-backend-addproduct-updateproduct-deleteproduct-functions-and-invalidate-the-products-query-on-success",
+      "featureTitle": "Build the Products admin section within the Admin Dashboard. Display a dark table/grid of all products with columns: Image thumbnail, Name, Category, Price, Inventory, Actions (Edit/Delete). Include an 'Add Product' button (sharp angled red, uppercase) that opens a modal/form with fields: Name, Price, Description, Category (dropdown), Image URL, Inventory. The Edit button opens the same form pre-filled. The Delete button shows a confirmation prompt before removing. All mutations call the backend addProduct, updateProduct, deleteProduct functions and invalidate the products query on success.",
+      "files": [
+        "frontend/src/components/admin/ProductFormModal.tsx",
+        "frontend/src/components/admin/ProductsSection.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-22"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-build-the-categories-collections-admin-section-within-the-admin-dashboard-show-two-sub-panels-side-by-side-or-tabbed-on-mobile-one-for-categories-one-for-collections-categories-panel-list-all-categories-with-name-and-slug-add-edit-delete-actions-and-an-inline-form-for-creating-or-editing-a-category-collections-panel-list-all-collections-with-name-and-description-add-edit-delete-actions-clicking-a-collection-expands-it-to-show-assigned-products-with-an-assign-product-dropdown-and-remove-buttons-per-product-all-mutations-call-the-corresponding-backend-functions-and-invalidate-relevant-queries-on-success",
+      "featureTitle": "Build the Categories & Collections admin section within the Admin Dashboard. Show two sub-panels side by side (or tabbed on mobile): one for Categories, one for Collections. Categories panel: list all categories with Name and Slug, Add/Edit/Delete actions, and an inline form for creating or editing a category. Collections panel: list all collections with Name and Description, Add/Edit/Delete actions; clicking a collection expands it to show assigned products with an 'Assign Product' dropdown and remove buttons per product. All mutations call the corresponding backend functions and invalidate relevant queries on success.",
+      "files": [
+        "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
+        "frontend/src/hooks/useQueries.ts"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-23"
+      ],
+      "confidence": "high"
+    }
+  ]
+}
