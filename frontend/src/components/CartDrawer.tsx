@@ -1,13 +1,60 @@
-import React from 'react';
-import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Minus, Plus, Trash2, ShoppingBag, Loader2, CheckCircle, LogIn } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from '@tanstack/react-router';
+import { useInternetIdentity } from '../hooks/useInternetIdentity';
+import { useCreateOrder } from '../hooks/useMutations';
+import { toast } from 'sonner';
 
 export default function CartDrawer() {
-  const { items, isOpen, closeCart, removeFromCart, updateQuantity, subtotal, freeShippingProgress, freeShippingThreshold } = useCart();
+  const { items, isOpen, closeCart, removeFromCart, updateQuantity, subtotal, freeShippingProgress, freeShippingThreshold, clearCart } = useCart();
   const navigate = useNavigate();
+  const { identity, login, loginStatus } = useInternetIdentity();
+  const createOrderMutation = useCreateOrder();
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   const remaining = Math.max(freeShippingThreshold - subtotal, 0);
+  const isAuthenticated = !!identity;
+  const isLoggingIn = loginStatus === 'logging-in';
+
+  const handleCheckout = async () => {
+    setCheckoutError(null);
+
+    if (!isAuthenticated) {
+      try {
+        await login();
+      } catch {
+        setCheckoutError('Login failed. Please try again.');
+      }
+      return;
+    }
+
+    const orderItems = items.map(item => ({
+      productId: item.product.id,
+      quantity: BigInt(item.quantity),
+      price: item.product.price,
+    }));
+
+    try {
+      const order = await createOrderMutation.mutateAsync({
+        customerId: 1n,
+        items: orderItems,
+        totalAmount: subtotal,
+      });
+
+      clearCart();
+      closeCart();
+      toast.success('Order placed successfully!', {
+        description: `Order #${order.orderId.toString()} is confirmed. Status: Pending.`,
+        duration: 5000,
+      });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to place order. Please try again.';
+      setCheckoutError(message);
+    }
+  };
+
+  const isCheckoutLoading = createOrderMutation.isPending || isLoggingIn;
 
   return (
     <>
@@ -107,6 +154,7 @@ export default function CartDrawer() {
                         onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
                         className="w-7 h-7 flex items-center justify-center text-white hover:text-beast-red transition-colors"
                         style={{ border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent' }}
+                        disabled={isCheckoutLoading}
                       >
                         <Minus size={12} />
                       </button>
@@ -117,6 +165,7 @@ export default function CartDrawer() {
                         onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
                         className="w-7 h-7 flex items-center justify-center text-white hover:text-beast-red transition-colors"
                         style={{ border: '1px solid rgba(255,255,255,0.15)', backgroundColor: 'transparent' }}
+                        disabled={isCheckoutLoading}
                       >
                         <Plus size={12} />
                       </button>
@@ -124,6 +173,7 @@ export default function CartDrawer() {
                         onClick={() => removeFromCart(item.product.id)}
                         className="ml-auto p-1 hover:text-beast-red transition-colors"
                         style={{ color: 'rgba(201,201,201,0.4)' }}
+                        disabled={isCheckoutLoading}
                       >
                         <Trash2 size={14} />
                       </button>
@@ -146,11 +196,53 @@ export default function CartDrawer() {
                 ${subtotal.toFixed(2)}
               </span>
             </div>
+
+            {/* Auth hint */}
+            {!isAuthenticated && (
+              <p className="font-body text-xs text-center mb-3 flex items-center justify-center gap-1.5" style={{ color: 'rgba(201,201,201,0.5)' }}>
+                <LogIn size={12} />
+                You'll be asked to log in to complete your order
+              </p>
+            )}
+
+            {/* Error message */}
+            {checkoutError && (
+              <div
+                className="mb-3 px-3 py-2 text-xs font-body rounded"
+                style={{ backgroundColor: 'rgba(209,0,0,0.12)', border: '1px solid rgba(209,0,0,0.3)', color: '#ff6b6b' }}
+              >
+                {checkoutError}
+              </div>
+            )}
+
             <button
-              className="beast-btn w-full"
-              style={{ fontSize: '0.9rem', padding: '1rem', clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))' }}
+              className="beast-btn w-full flex items-center justify-center gap-2"
+              style={{
+                fontSize: '0.9rem',
+                padding: '1rem',
+                clipPath: 'polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 14px 100%, 0 calc(100% - 14px))',
+                opacity: isCheckoutLoading ? 0.7 : 1,
+                cursor: isCheckoutLoading ? 'not-allowed' : 'pointer',
+              }}
+              onClick={handleCheckout}
+              disabled={isCheckoutLoading}
             >
-              Checkout
+              {isCheckoutLoading ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  {isLoggingIn ? 'Logging in...' : 'Placing Order...'}
+                </>
+              ) : isAuthenticated ? (
+                <>
+                  <CheckCircle size={16} />
+                  Place Order
+                </>
+              ) : (
+                <>
+                  <LogIn size={16} />
+                  Login & Checkout
+                </>
+              )}
             </button>
           </div>
         )}

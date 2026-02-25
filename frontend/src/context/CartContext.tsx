@@ -12,6 +12,7 @@ interface CartContextType {
   addToCart: (product: Product) => void;
   removeFromCart: (productId: bigint) => void;
   updateQuantity: (productId: bigint, quantity: number) => void;
+  clearCart: () => void;
   toggleCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -60,6 +61,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const clearCart = useCallback(() => {
+    setItems([]);
+  }, []);
+
   const toggleCart = useCallback(() => setIsOpen(prev => !prev), []);
   const openCart = useCallback(() => setIsOpen(true), []);
   const closeCart = useCallback(() => setIsOpen(false), []);
@@ -75,6 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       addToCart,
       removeFromCart,
       updateQuantity,
+      clearCart,
       toggleCart,
       openCart,
       closeCart,

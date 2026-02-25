@@ -5,12 +5,13 @@ import AdminSidebar from '../components/AdminSidebar';
 import OrdersSection from '../components/admin/OrdersSection';
 import ProductsSection from '../components/admin/ProductsSection';
 import CategoriesCollectionsSection from '../components/admin/CategoriesCollectionsSection';
-import { LogIn, Loader2 } from 'lucide-react';
+import GoogleLoginScreen from '../components/admin/GoogleLoginScreen';
+import { Loader2 } from 'lucide-react';
 
 export type AdminSection = 'orders' | 'products' | 'categories';
 
 export default function Admin() {
-  const { login, clear, loginStatus, identity, isInitializing } = useInternetIdentity();
+  const { login, clear, loginStatus, identity, isInitializing, loginError } = useInternetIdentity();
   const queryClient = useQueryClient();
   const [activeSection, setActiveSection] = useState<AdminSection>('orders');
 
@@ -33,64 +34,42 @@ export default function Admin() {
     queryClient.clear();
   };
 
+  // Show spinner while initializing stored identity
   if (isInitializing) {
     return (
       <div
         className="min-h-screen flex items-center justify-center"
         style={{ backgroundColor: '#0B0B0B' }}
       >
-        <Loader2 className="animate-spin text-beast-red" size={40} />
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div
-        className="min-h-screen flex items-center justify-center"
-        style={{ backgroundColor: '#0B0B0B' }}
-      >
-        <div
-          className="text-center p-10 max-w-md w-full mx-4"
-          style={{
-            backgroundColor: '#111111',
-            border: '1px solid rgba(255,255,255,0.08)',
-          }}
-        >
-          <div
-            className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
-            style={{ backgroundColor: 'rgba(209,0,0,0.15)', border: '1px solid #D10000' }}
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin" size={36} style={{ color: '#D10000' }} />
+          <p
+            className="text-xs uppercase tracking-widest"
+            style={{
+              color: 'rgba(255,255,255,0.3)',
+              fontFamily: "'Barlow Condensed', sans-serif",
+              fontWeight: 600,
+            }}
           >
-            <LogIn size={28} style={{ color: '#D10000' }} />
-          </div>
-          <h1
-            className="text-3xl font-heading uppercase tracking-widest mb-3"
-            style={{ color: '#ffffff' }}
-          >
-            Admin Access
-          </h1>
-          <p className="text-sm mb-8" style={{ color: '#C9C9C9' }}>
-            Sign in with your Internet Identity to access the Beast Ride admin dashboard.
+            Initializing...
           </p>
-          <button
-            onClick={handleLogin}
-            disabled={isLoggingIn}
-            className="beast-btn beast-btn-sweep w-full flex items-center justify-center gap-2"
-          >
-            {isLoggingIn ? (
-              <>
-                <Loader2 size={16} className="animate-spin" />
-                Signing In...
-              </>
-            ) : (
-              'Sign In'
-            )}
-          </button>
         </div>
       </div>
     );
   }
 
+  // Show Google-only login screen for unauthenticated users
+  if (!isAuthenticated) {
+    return (
+      <GoogleLoginScreen
+        onLogin={handleLogin}
+        isLoggingIn={isLoggingIn}
+        loginError={loginError}
+      />
+    );
+  }
+
+  // Authenticated admin dashboard
   return (
     <div className="min-h-screen flex" style={{ backgroundColor: '#0B0B0B' }}>
       <AdminSidebar

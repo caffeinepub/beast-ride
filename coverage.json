@@ -1,121 +1,46 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-24T17:31:33.124Z",
+  "generatedAt": "2026-02-25T17:47:58.412Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 7,
-    "implemented": 4,
+    "total": 2,
+    "implemented": 1,
     "items": [
       {
-        "id": "REQ-17",
-        "summary": "Extend the Motoko backend actor to support Order Management: add an Order type with fields (orderId, customerId, items: [{productId, quantity, price}], totalAmount, status: {#pending; #confirmed; #shipped; #delivered; #cancelled}, createdAt, updatedAt). Implement update functions: createOrder, updateOrderStatus. Implement query functions: getAllOrders, getOrderById, getOrdersByStatus. Pre-populate with a few mock orders.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-18",
-        "summary": "Extend the Motoko backend actor to support full Product Listing Management CRUD: add update functions addProduct, updateProduct, deleteProduct that manage products with fields (id, name, price, description, category, imageUrl, inventory: Nat). Existing getProducts, getProductById, getProductsByCategory queries remain intact.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-19",
-        "summary": "Extend the Motoko backend actor to support Category and Collection Management: add a Category type (id, name, slug) and a Collection type (id, name, description, productIds: [Nat]). Implement update functions: addCategory, updateCategory, deleteCategory, addCollection, updateCollection, deleteCollection, assignProductToCollection, removeProductFromCollection. Implement query functions: getAllCategories, getAllCollections, getCollectionById. Pre-populate with Bike Accessories and Car Performance categories.",
-        "status": "unknown",
-        "plannedFiles": [],
-        "matchedFiles": []
-      },
-      {
-        "id": "REQ-20",
-        "summary": "Build an Admin Dashboard page at route /admin in the React frontend. The page must be protected behind a simple admin check (e.g. only accessible when authenticated via Internet Identity). The dashboard has a dark sidebar with nav links to three sections: Orders, Products, and Categories & Collections. The sidebar uses the Beast Ride design system: #0B0B0B background, red accent #D10000, silver/metal text, uppercase letter-spacing labels.",
+        "id": "REQ-1",
+        "summary": "On the Admin page, display a login screen that instructs users to sign in exclusively via Internet Identity using Google as the authentication method. The login button should trigger Internet Identity's Google login flow. Any other login options (passkeys, other providers) should not be presented on the admin login screen.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/App.tsx",
           "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/AdminSidebar.tsx"
+          "frontend/src/components/admin/GoogleLoginScreen.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/App.tsx",
           "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/AdminSidebar.tsx"
+          "frontend/src/components/admin/GoogleLoginScreen.tsx"
         ]
       },
       {
-        "id": "REQ-21",
-        "summary": "Build the Orders admin section within the Admin Dashboard. Display a full-width dark table listing all orders with columns: Order ID, Customer, Items, Total, Status, Created Date. Each row has a status badge colored by state (Pending=yellow, Confirmed=blue, Shipped=orange, Delivered=green, Cancelled=grey). Each row has a dropdown or button to update the order status. Include a status filter bar at the top to filter orders by status. Fetch data using a React Query hook calling the backend getAllOrders and updateOrderStatus functions.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useMutations.ts",
-          "frontend/src/components/admin/OrdersSection.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useMutations.ts",
-          "frontend/src/components/admin/OrdersSection.tsx"
-        ]
-      },
-      {
-        "id": "REQ-22",
-        "summary": "Build the Products admin section within the Admin Dashboard. Display a dark table/grid of all products with columns: Image thumbnail, Name, Category, Price, Inventory, Actions (Edit/Delete). Include an 'Add Product' button (sharp angled red, uppercase) that opens a modal/form with fields: Name, Price, Description, Category (dropdown), Image URL, Inventory. The Edit button opens the same form pre-filled. The Delete button shows a confirmation prompt before removing. All mutations call the backend addProduct, updateProduct, deleteProduct functions and invalidate the products query on success.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/components/admin/ProductsSection.tsx",
-          "frontend/src/components/admin/ProductFormModal.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/components/admin/ProductsSection.tsx",
-          "frontend/src/components/admin/ProductFormModal.tsx"
-        ]
-      },
-      {
-        "id": "REQ-23",
-        "summary": "Build the Categories & Collections admin section within the Admin Dashboard. Show two sub-panels side by side (or tabbed on mobile): one for Categories, one for Collections. Categories panel: list all categories with Name and Slug, Add/Edit/Delete actions, and an inline form for creating or editing a category. Collections panel: list all collections with Name and Description, Add/Edit/Delete actions; clicking a collection expands it to show assigned products with an 'Assign Product' dropdown and remove buttons per product. All mutations call the corresponding backend functions and invalidate relevant queries on success.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
-          "frontend/src/components/admin/CategoryForm.tsx",
-          "frontend/src/components/admin/CollectionForm.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/components/admin/CategoriesCollectionsSection.tsx"
-        ]
+        "id": "REQ-2",
+        "summary": "In the backend Motoko actor, enforce that all admin operations (product CRUD, order management, category/collection management) validate the caller's principal before executing. Only principals that have previously been registered as admins (or the initial deployer) should be permitted to call admin-only functions.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
   "changedFiles": [
-    "backend/authorization/MixinAuthorization.mo",
-    "backend/authorization/access-control.mo",
     "backend/main.mo",
     "backend/migration.mo",
     "build-request.json",
-    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/backend.d.ts",
-    "frontend/src/backend.ts",
-    "frontend/src/components/AdminSidebar.tsx",
-    "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
-    "frontend/src/components/admin/OrdersSection.tsx",
-    "frontend/src/components/admin/ProductFormModal.tsx",
-    "frontend/src/components/admin/ProductsSection.tsx",
-    "frontend/src/declarations/backend.did.d.ts",
-    "frontend/src/declarations/backend.did.js",
-    "frontend/src/hooks/useActor.ts",
-    "frontend/src/hooks/useMutations.ts",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/components/admin/GoogleLoginScreen.tsx",
     "frontend/src/pages/Admin.tsx",
-    "frontend/src/utils/urlParams.ts",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

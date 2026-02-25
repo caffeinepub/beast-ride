@@ -1,123 +1,27 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Admin Dashboard: Order Management, Product Listing Management, and Category/Collection Management",
+  "title": "Restrict Admin Panel Login to Google Authenticator (Internet Identity with Google)",
   "requirements": [
     {
-      "id": "REQ-20",
-      "summary": "Build an Admin Dashboard page at route /admin with a dark sidebar for navigating Orders, Products, and Categories & Collections sections, protected by Internet Identity authentication",
+      "id": "REQ-1",
+      "summary": "Display a Google-only login screen on the Admin page that restricts authentication to Internet Identity using Google, blocking access to unauthenticated users and hiding all other login provider options.",
       "acceptanceCriteria": [
-        "Route /admin is added to the React app router",
-        "Dashboard renders a dark sidebar with three navigation items: Orders, Products, Categories & Collections",
-        "Sidebar styling matches the Beast Ride design system (dark background, red accent, silver text, uppercase labels)",
-        "Unauthenticated users see a login prompt or are redirected; authenticated users see the dashboard",
-        "Clicking each sidebar item shows the corresponding admin section in the main content area"
+        "The admin login screen shows a single 'Sign in with Google' button that launches Internet Identity.",
+        "Unauthenticated users cannot access any admin content — they are shown only the login screen.",
+        "After successful Google-based Internet Identity login, the user is granted access to the admin dashboard.",
+        "No passkey or other provider login options are presented on the admin login page."
       ],
       "file_operations": [
-        {
-          "path": "frontend/src/App.tsx",
-          "operation": "modify",
-          "description": "Register the /admin route in the TanStack Router configuration. Use the authorization component to protect this route and ensure only authenticated Internet Identity users can access it. Verify the authorization component's usage instructions before implementing."
-        },
         {
           "path": "frontend/src/pages/Admin.tsx",
-          "operation": "create",
-          "description": "Create the Admin Dashboard page component with a dark sidebar (#0B0B0B background) featuring three navigation items (Orders, Products, Categories & Collections) styled with red accent (#D10000), silver text, and uppercase letter-spacing. Use the authorization component to check if the user is authenticated via Internet Identity; show a login prompt or redirect if not. The sidebar should toggle between sections (Orders, Products, Categories & Collections) with the selected section rendered in the main content area. Verify the authorization component's usage instructions before implementing."
-        },
-        {
-          "path": "frontend/src/components/AdminSidebar.tsx",
-          "operation": "create",
-          "description": "Create a reusable AdminSidebar component with a dark vertical sidebar containing three nav items: Orders, Products, and Categories & Collections. Style using #0B0B0B background, red accent #D10000 for active states, silver/metal text, and uppercase labels with letter-spacing. Accept a prop for the currently selected section and an onClick handler to switch sections."
-        }
-      ]
-    },
-    {
-      "id": "REQ-21",
-      "summary": "Build the Orders admin section displaying a dark table of all orders with status badges, status filter bar, and status update dropdown using React Query",
-      "acceptanceCriteria": [
-        "Orders table renders all orders fetched from the backend",
-        "Each row shows Order ID, Customer, Items count, Total, Status badge, and Created Date",
-        "Status badges are color-coded per status",
-        "Status filter bar at top filters the visible rows",
-        "Dropdown or button per row allows changing the order status and optimistically updates the UI",
-        "Loading skeleton is shown while data is fetching"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add React Query hooks for order management: useGetAllOrders (calls getAllOrders), useGetOrdersByStatus (calls getOrdersByStatus with status parameter). These hooks should use the backend interface and handle loading, error, and data states properly."
+          "description": "Replace the current authentication flow with a dedicated login screen that only presents a 'Sign in with Google' button. Use the useInternetIdentity hook to trigger login with Google-specific parameters. Gate all admin dashboard content behind successful authentication. Ensure the login screen is the only visible content when the user is not authenticated. After successful login, display the existing admin sections (sidebar, orders, products, categories/collections)."
         },
         {
-          "path": "frontend/src/hooks/useMutations.ts",
+          "path": "frontend/src/components/admin/GoogleLoginScreen.tsx",
           "operation": "create",
-          "description": "Create React Query mutation hooks for all admin operations: useUpdateOrderStatus (calls updateOrderStatus with orderId and status, invalidates orders queries on success), useAddProduct, useUpdateProduct, useDeleteProduct, useAddCategory, useUpdateCategory, useDeleteCategory, useAddCollection, useUpdateCollection, useDeleteCollection, useAssignProductToCollection, useRemoveProductFromCollection. Each mutation should invalidate the relevant queries on success."
-        },
-        {
-          "path": "frontend/src/components/admin/OrdersSection.tsx",
-          "operation": "create",
-          "description": "Create the OrdersSection component that fetches all orders using useGetAllOrders and displays them in a full-width dark table with columns: Order ID, Customer (customerId), Items (count of items array), Total (totalAmount), Status badge (color-coded: Pending=yellow, Confirmed=blue, Shipped=orange, Delivered=green, Cancelled=grey), Created Date (formatted from createdAt). Include a status filter bar at the top with buttons for All, Pending, Confirmed, Shipped, Delivered, Cancelled. Each row should have a dropdown/button to update the order status using useUpdateOrderStatus mutation with optimistic UI updates. Show a loading skeleton while data is fetching."
-        }
-      ]
-    },
-    {
-      "id": "REQ-22",
-      "summary": "Build the Products admin section with a dark table/grid of products, Add Product button, Edit/Delete actions, and a modal form for product CRUD operations",
-      "acceptanceCriteria": [
-        "Products table lists all products with image thumbnail, name, category, price, inventory, and action buttons",
-        "Add Product button opens a modal form with all required fields",
-        "Form validates required fields (name, price, category) before submission",
-        "Edit button pre-fills the form with the selected product's data",
-        "Delete button shows a confirmation dialog and removes the product on confirm",
-        "React Query cache is invalidated after add, edit, or delete so the table refreshes",
-        "Loading and error states are handled gracefully"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/admin/ProductsSection.tsx",
-          "operation": "create",
-          "description": "Create the ProductsSection component that fetches all products using the existing useGetAllProducts hook and displays them in a dark table/grid with columns: Image thumbnail (using product.image), Name, Category, Price, Inventory, and Actions (Edit/Delete buttons). Include a sharp angled red uppercase 'Add Product' button at the top that opens a product form modal. The Edit button opens the same form pre-filled with the selected product data. The Delete button shows a confirmation dialog before calling useDeleteProduct mutation. Handle loading and error states gracefully."
-        },
-        {
-          "path": "frontend/src/components/admin/ProductFormModal.tsx",
-          "operation": "create",
-          "description": "Create a reusable ProductFormModal component with fields: Name (text), Price (number), Description (textarea), Category (dropdown fetching from useGetAllCategories), Image URL (text input), Inventory (number). Validate required fields (name, price, category) before submission. Accept mode prop ('add' or 'edit') and initialData prop for edit mode. On submit, call useAddProduct or useUpdateProduct mutation. The modal should have a dark theme with red accent buttons matching the Beast Ride design system."
-        }
-      ]
-    },
-    {
-      "id": "REQ-23",
-      "summary": "Build the Categories & Collections admin section with two side-by-side panels (tabbed on mobile) for managing categories and collections with CRUD operations and product assignment",
-      "acceptanceCriteria": [
-        "Categories panel lists all categories with name and slug",
-        "Add/Edit/Delete controls work for categories and call backend functions",
-        "Collections panel lists all collections",
-        "Clicking a collection shows its assigned products",
-        "Assign Product dropdown lets admin pick a product and add it to the collection",
-        "Remove button unassigns a product from a collection",
-        "All mutations invalidate the relevant React Query caches so lists refresh",
-        "Responsive: panels stack vertically on mobile"
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Add React Query hooks for category and collection management: useGetAllCategories (calls getAllCategories), useGetAllCollections (calls getAllCollections), useGetCollectionById (calls getCollectionById with id parameter). These hooks should properly handle loading, error, and data states."
-        },
-        {
-          "path": "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
-          "operation": "create",
-          "description": "Create the CategoriesCollectionsSection component with two sub-panels: CategoriesPanel and CollectionsPanel, displayed side-by-side on desktop and stacked/tabbed on mobile. The CategoriesPanel lists all categories (using useGetAllCategories) with Name and Slug, and provides Add/Edit/Delete controls using an inline form or modal. The CollectionsPanel lists all collections (using useGetAllCollections) with Name and Description; clicking a collection expands it to show assigned products (by fetching product details for productIds) with an 'Assign Product' dropdown (populated from useGetAllProducts) and remove buttons per product. All mutations (useAddCategory, useUpdateCategory, useDeleteCategory, useAddCollection, useUpdateCollection, useDeleteCollection, useAssignProductToCollection, useRemoveProductFromCollection) invalidate relevant caches on success."
-        },
-        {
-          "path": "frontend/src/components/admin/CategoryForm.tsx",
-          "operation": "create",
-          "description": "Create a reusable CategoryForm component with fields: Name (text) and Slug (text). Validate required fields before submission. Accept mode prop ('add' or 'edit') and initialData prop for edit mode. On submit, call useAddCategory or useUpdateCategory mutation. Style with dark theme and red accents."
-        },
-        {
-          "path": "frontend/src/components/admin/CollectionForm.tsx",
-          "operation": "create",
-          "description": "Create a reusable CollectionForm component with fields: Name (text) and Description (textarea). Validate required fields before submission. Accept mode prop ('add' or 'edit') and initialData prop for edit mode. On submit, call useAddCollection or useUpdateCollection mutation. Style with dark theme and red accents."
+          "description": "Create a centered login screen component that displays a branded 'Sign in with Google' button. The button should call the Internet Identity login flow with Google as the required authentication method. Include clear messaging that admin access requires Google authentication via Internet Identity. Style the component consistently with the Beast Ride dark theme (red accents, dark background). Show a loading state while login is in progress. Handle login errors gracefully with user-friendly error messages."
         }
       ]
     }
