@@ -1,6 +1,5 @@
 import React from 'react';
 import { ClipboardList, Package, Tag, LogOut, LayoutDashboard } from 'lucide-react';
-import { useNavigate } from '@tanstack/react-router';
 import type { AdminSection } from '../pages/Admin';
 
 interface Props {
@@ -17,15 +16,10 @@ const navItems: { id: AdminSection; label: string; icon: React.ReactNode }[] = [
 ];
 
 export default function AdminSidebar({ activeSection, onSectionChange, onLogout, identity }: Props) {
-  const navigate = useNavigate();
-
   const handleLogout = () => {
-    // Clear the simple session-based auth flag
-    sessionStorage.removeItem('adminAuthenticated');
-    // Call optional external logout handler (e.g., Internet Identity clear)
+    // Call the logout handler from Admin.tsx (clears identity + query cache)
+    // The Admin page will automatically re-render to the login screen
     if (onLogout) onLogout();
-    // Redirect to admin login
-    navigate({ to: '/admin-login' });
   };
 
   const principal = identity?.getPrincipal().toString() ?? '';
@@ -87,7 +81,6 @@ export default function AdminSidebar({ activeSection, onSectionChange, onLogout,
               className="w-full flex items-center gap-3 px-3 py-2.5 text-left transition-all duration-200"
               style={{
                 backgroundColor: isActive ? 'rgba(209,0,0,0.12)' : 'transparent',
-                borderLeft: isActive ? '2px solid #D10000' : '2px solid transparent',
                 color: isActive ? '#ffffff' : '#C9C9C9',
                 fontFamily: "'Barlow Condensed', sans-serif",
                 fontWeight: 600,
@@ -97,19 +90,13 @@ export default function AdminSidebar({ activeSection, onSectionChange, onLogout,
                 cursor: 'pointer',
                 border: 'none',
                 outline: 'none',
+                borderLeft: isActive ? '2px solid #D10000' : '2px solid transparent',
               }}
             >
-              <span
-                style={{ color: isActive ? '#D10000' : '#C9C9C9', flexShrink: 0 }}
-              >
+              <span style={{ color: isActive ? '#D10000' : '#C9C9C9', flexShrink: 0 }}>
                 {item.icon}
               </span>
-              <span
-                style={{
-                  borderLeft: isActive ? '2px solid #D10000' : '2px solid transparent',
-                  paddingLeft: '0.5rem',
-                }}
-              >
+              <span style={{ paddingLeft: '0.5rem' }}>
                 {item.label}
               </span>
             </button>

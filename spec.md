@@ -1,11 +1,13 @@
 # Specification
 
 ## Summary
-**Goal:** Add admin principal reset functionality so a new principal can reclaim admin access when the previous one is no longer valid.
+**Goal:** Reset admin access so that every fresh deployment starts with an unclaimed admin slot, and the first authenticated user to visit the Admin page can claim admin with a single click.
 
 **Planned changes:**
-- Add a `resetAdminPrincipal` backend function in `backend/main.mo` that clears the stored admin principal, protected so only the current admin (or a safe fallback mechanism) can call it
-- Add a "Reset Admin Access" button on the Admin dashboard (`frontend/src/pages/Admin.tsx`) that shows a confirmation dialog before calling the reset function, then allows the current principal to re-claim admin access, with toast notifications for success/error states
-- Update the "already claimed" error state on the Admin page to show a user-friendly explanation and an inline option to reset admin access instead of a dead-end error
+- Remove any hardcoded or persisted admin principal from backend stable storage initialization so the actor starts with no admin set after deployment
+- Add a migration in the backend that clears any previously stored admin principal on canister upgrade
+- Update the Admin page to detect when no admin is claimed and show a prominent "Claim Admin Access" button to the authenticated Internet Identity user
+- Clicking the button calls `claimAdmin` and immediately grants admin privileges, then redirects to the admin dashboard
+- Hide the claim button and show the normal admin dashboard when admin is already claimed
 
-**User-visible outcome:** Admins can reset the stored admin principal from the dashboard and immediately re-claim access, and users who encounter the "already claimed" error are given a clear recovery path instead of being stuck.
+**User-visible outcome:** After publishing, the first user to open the Admin page sees a "Claim Admin Access" button and instantly becomes the admin with no errors. Subsequent visits show the normal admin dashboard.

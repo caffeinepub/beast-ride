@@ -1,23 +1,11 @@
-import React, { useEffect } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import React from 'react';
 
 interface AdminGuardProps {
   children: React.ReactNode;
 }
 
+// AdminGuard is now a pass-through — all authentication and authorization
+// is handled by Internet Identity inside the Admin page itself.
 export default function AdminGuard({ children }: AdminGuardProps) {
-  const navigate = useNavigate();
-  const isAuthenticated = sessionStorage.getItem('adminAuthenticated') === 'true';
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate({ to: '/admin-login' });
-    }
-  }, [isAuthenticated, navigate]);
-
-  if (!isAuthenticated) {
-    return null;
-  }
-
   return <>{children}</>;
 }

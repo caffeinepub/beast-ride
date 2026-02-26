@@ -1,46 +1,41 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T17:42:50.872Z",
+  "generatedAt": "2026-02-26T17:53:58.099Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
     "total": 3,
-    "implemented": 2,
+    "implemented": 1,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Add a backend function `resetAdminPrincipal` that clears the stored admin principal ID, allowing a new principal to claim admin access. This function should only be callable by the current admin principal or, if no valid admin exists, should allow a forced reset via a secure mechanism (e.g., a one-time reset flag or hardcoded canister controller check).",
+        "summary": "Reset the persisted admin principal in the backend so that on every fresh deployment the admin slot starts as unclaimed. Remove any hardcoded or leftover admin principal from stable storage initialization, ensuring the actor initializes with no admin set.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Add a 'Reset Admin Access' button on the Admin dashboard page (`frontend/src/pages/Admin.tsx`) that calls the `resetAdminPrincipal` backend function and then immediately allows the current logged-in principal to re-claim admin access. Display a confirmation dialog before executing the reset to prevent accidental use.",
+        "summary": "On the Admin page, after the backend is reset, automatically prompt the authenticated Internet Identity user to claim admin access on first load if no admin is set. The user should be able to click a single 'Claim Admin Access' button and immediately receive admin privileges without any intermediate errors.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/useMutations.ts",
           "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/admin/ResetAdminDialog.tsx"
+          "frontend/src/hooks/useMutations.ts",
+          "frontend/src/hooks/useQueries.ts"
         ],
         "matchedFiles": [
-          "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/admin/ResetAdminDialog.tsx"
+          "frontend/src/pages/Admin.tsx"
         ]
       },
       {
         "id": "REQ-3",
-        "summary": "On the Admin page (`frontend/src/pages/Admin.tsx`), when the 'Admin access has already been claimed' error is encountered and the user is authenticated, display a user-friendly message explaining the situation and show an option to reset admin access rather than a dead-end error state.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/Admin.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Admin.tsx"
-        ]
+        "summary": "Write a migration (backend/migration.mo) that clears any previously stored admin principal from stable state so that the upgrade results in a clean unclaimed admin slot, preventing old principal data from persisting across the deployment.",
+        "status": "unknown",
+        "plannedFiles": [],
+        "matchedFiles": []
       }
     ]
   },
@@ -51,8 +46,12 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
+    "frontend/src/App.tsx",
+    "frontend/src/components/AdminGuard.tsx",
+    "frontend/src/components/AdminSidebar.tsx",
     "frontend/src/components/admin/ResetAdminDialog.tsx",
     "frontend/src/pages/Admin.tsx",
+    "frontend/src/pages/AdminLogin.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -1,49 +1,32 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Add admin principal reset functionality",
+  "title": "Reset admin access so first click after publish claims admin",
   "requirements": [
     {
       "id": "REQ-2",
-      "summary": "Add a 'Reset Admin Access' button on the Admin dashboard that calls the reset backend function and allows re-claiming admin access with a confirmation dialog",
+      "summary": "Automatically prompt authenticated Internet Identity user to claim admin access on first load when no admin is set, allowing a single-click admin claim without errors",
       "acceptanceCriteria": [
-        "A 'Reset Admin Access' button is visible in the admin dashboard UI.",
-        "Clicking the button shows a confirmation dialog warning the user that current admin access will be revoked.",
-        "On confirmation, the reset mutation is called and the current principal can immediately claim admin again.",
-        "Success and error states are communicated to the user via toast notifications.",
-        "The button is only shown when the user is authenticated via Internet Identity."
+        "When no admin is claimed, the Admin page shows a prominent 'Claim Admin Access' button to the authenticated Internet Identity user.",
+        "Clicking the button calls claimAdmin and grants admin access immediately.",
+        "After claiming, the user is taken directly to the admin dashboard without errors.",
+        "If admin is already claimed, the claim button is not shown and the normal admin dashboard is rendered."
       ],
       "file_operations": [
+        {
+          "path": "frontend/src/pages/Admin.tsx",
+          "operation": "modify",
+          "description": "Update the admin page to automatically check if admin is claimed on load when the user is authenticated with Internet Identity. If no admin is set (isCallerAdmin returns false), display a prominent 'Claim Admin Access' button that calls the claimAdmin mutation. After successful claiming, refresh the admin status and proceed to show the normal admin dashboard sections (orders, products, categories). If admin is already claimed, skip the claim flow and render the dashboard immediately. Remove any hardcoded admin check bypasses and ensure the flow handles both fresh deployments and existing admin scenarios. Use the authorization component's backend capability for isCallerAdmin checks."
+        },
         {
           "path": "frontend/src/hooks/useMutations.ts",
           "operation": "modify",
-          "description": "Add a useResetAdminPrincipal mutation hook that calls the backend resetAdminPrincipal function and invalidates admin-related queries on success. The mutation should handle success/error states and return a mutate function for the UI to invoke."
+          "description": "Ensure the useClaimAdmin mutation hook is present and correctly calls the backend claimAdmin capability. The mutation should invalidate the 'isCallerAdmin' query key on success to trigger a refresh of admin status. Add proper error handling and success callbacks to support the admin claiming flow from the Admin page."
         },
         {
-          "path": "frontend/src/pages/Admin.tsx",
+          "path": "frontend/src/hooks/useQueries.ts",
           "operation": "modify",
-          "description": "Add a 'Reset Admin Access' button in the admin dashboard UI (visible only when authenticated). On click, show a confirmation dialog warning the user that current admin access will be revoked. On confirmation, call the resetAdminPrincipal mutation, then immediately call claimAdminAccess mutation to re-claim admin with the current principal. Display toast notifications for success and error states. Position the button prominently in the dashboard header or sidebar area."
-        },
-        {
-          "path": "frontend/src/components/admin/ResetAdminDialog.tsx",
-          "operation": "create",
-          "description": "Create a reusable confirmation dialog component for the admin reset action. The dialog should display a warning message explaining that resetting will revoke current admin access and require re-claiming. Include 'Cancel' and 'Confirm Reset' buttons. Use shadcn/ui Dialog component primitives for consistent styling. Accept onConfirm and onCancel callbacks as props."
-        }
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "summary": "Display a user-friendly message and reset option when the 'Admin access has already been claimed' error occurs on the Admin page",
-      "acceptanceCriteria": [
-        "When the claim-admin mutation returns an 'already claimed' error, the UI shows a clear explanation message.",
-        "A 'Reset Admin Access' action is presented inline on this error state.",
-        "The user is not stuck at a dead-end error with no recovery path."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Admin.tsx",
-          "operation": "modify",
-          "description": "Update the error handling logic for the claimAdminAccess mutation to detect 'Admin access has already been claimed' errors. When this specific error occurs and the user is authenticated, display a user-friendly explanation message (e.g., 'Admin access has already been claimed by another principal. You can reset admin access to reclaim it with your current identity.') and show the 'Reset Admin Access' button inline within the error state UI. Reuse the ResetAdminDialog component for the reset confirmation flow."
+          "description": "Ensure the useIsCallerAdmin query hook is present and correctly fetches admin status from the backend isCallerAdmin capability. The query should be enabled only when the actor is ready. This hook will be used by the Admin page to determine whether to show the claim button or the dashboard."
         }
       ]
     }
