@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useActor } from './useActor';
+import { useInternetIdentity } from './useInternetIdentity';
 import type { Product, Category, Collection, Order } from '../backend';
 import { OrderStatus } from '../backend';
 
@@ -87,30 +88,81 @@ export function useGetCollectionById(id: bigint | null) {
   });
 }
 
-export function useGetAllOrders() {
+/**
+ * Checks whether the currently authenticated caller is an admin.
+ * Only runs when the user is authenticated and the actor is ready.
+ */
+export function useIsCallerAdmin() {
   const { actor, isFetching } = useActor();
+  const { identity, isInitializing } = useInternetIdentity();
+
+  const isAuthenticated = !!identity;
+  const actorReady = !!actor && !isFetching && !isInitializing;
+
+  return useQuery<boolean>({
+    queryKey: ['isCallerAdmin', identity?.getPrincipal().toString()],
+    queryFn: async () => {
+      if (!actor) return false;
+      return actor.isCallerAdmin();
+    },
+    enabled: actorReady && isAuthenticated,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+}
+
+export function useGetAllOrders(enabled: boolean = true) {
+  const { actor, isFetching } = useActor();
+  const { identity, isInitializing } = useInternetIdentity();
+
+  // Only run when:
+  // 1. Identity is fully initialized (not still loading stored session)
+  // 2. User is authenticated (has an identity — anonymous actor cannot call admin methods)
+  // 3. Actor is ready and not currently being recreated
+  // 4. Caller has been confirmed as admin (passed via `enabled` prop)
+  const isAuthenticated = !!identity;
+  const actorReady = !!actor && !isFetching && !isInitializing;
 
   return useQuery<Order[]>({
-    queryKey: ['orders'],
+    queryKey: ['orders', identity?.getPrincipal().toString()],
     queryFn: async () => {
-      if (!actor) return [];
+      if (!actor) throw new Error('Actor not available');
       return actor.getAllOrders();
     },
-    enabled: !!actor && !isFetching,
+    enabled: actorReady && isAuthenticated && enabled,
     staleTime: 0,
+    // Do not retry on authorization errors — they won't resolve on retry
+    retry: (failureCount, error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes('Unauthorized') || message.includes('admin')) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 }
 
 export function useGetOrdersByStatus(status: OrderStatus | null) {
   const { actor, isFetching } = useActor();
+  const { identity, isInitializing } = useInternetIdentity();
+
+  const isAuthenticated = !!identity;
+  const actorReady = !!actor && !isFetching && !isInitializing;
 
   return useQuery<Order[]>({
-    queryKey: ['orders', 'status', status],
+    queryKey: ['orders', 'status', status, identity?.getPrincipal().toString()],
     queryFn: async () => {
       if (!actor || status === null) return [];
       return actor.getOrdersByStatus(status);
     },
-    enabled: !!actor && !isFetching && status !== null,
+    enabled: actorReady && isAuthenticated && status !== null,
     staleTime: 0,
+    retry: (failureCount, error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error);
+      if (message.includes('Unauthorized') || message.includes('admin')) {
+        return false;
+      }
+      return failureCount < 2;
+    },
   });
 }

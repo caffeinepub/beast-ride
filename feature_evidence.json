@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-on-the-admin-page-display-a-login-screen-that-instructs-users-to-sign-in-exclusively-via-internet-identity-using-google-as-the-authentication-method-the-login-button-should-trigger-internet-identity-s-google-login-flow-any-other-login-options-passkeys-other-providers-should-not-be-presented-on-the-admin-login-screen",
-      "featureTitle": "On the Admin page, display a login screen that instructs users to sign in exclusively via Internet Identity using Google as the authentication method. The login button should trigger Internet Identity's Google login flow. Any other login options (passkeys, other providers) should not be presented on the admin login screen.",
+      "featureId": "feature-ensure-the-frontend-admin-dashboard-in-frontend-src-pages-admin-tsx-and-frontend-src-components-admin-orderssection-tsx-correctly-passes-the-authenticated-identity-when-calling-admin-only-backend-methods-verify-that-the-actor-used-for-admin-queries-is-always-the-authenticated-actor-not-anonymous-and-that-query-mutation-hooks-in-usequeries-ts-and-usemutations-ts-are-enabled-only-when-a-valid-authenticated-identity-is-present",
+      "featureTitle": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
       "files": [
-        "frontend/src/components/admin/GoogleLoginScreen.tsx",
+        "frontend/src/hooks/useQueries.ts",
         "frontend/src/pages/Admin.tsx"
       ],
       "components": [
@@ -18,7 +18,7 @@
         "authorization@4.0.0"
       ],
       "testIds": [
-        "REQ-1"
+        "REQ-2"
       ],
       "confidence": "high"
     }

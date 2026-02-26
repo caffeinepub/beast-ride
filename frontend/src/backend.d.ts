@@ -7,35 +7,6 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
-export interface Category {
-    id: bigint;
-    name: string;
-    slug: string;
-}
-export type Time = bigint;
-export interface OrderItem {
-    productId: ProductId;
-    quantity: bigint;
-    price: Price;
-}
-export type MediaUrl = string;
-export interface Order {
-    status: OrderStatus;
-    createdAt: Time;
-    orderId: bigint;
-    updatedAt: Time;
-    totalAmount: Price;
-    customerId: bigint;
-    items: Array<OrderItem>;
-}
-export type Price = number;
-export interface Collection {
-    id: bigint;
-    productIds: Array<ProductId>;
-    name: string;
-    description: string;
-}
-export type ProductId = bigint;
 export interface Product {
     id: ProductId;
     inventory: bigint;
@@ -45,6 +16,40 @@ export interface Product {
     image: MediaUrl;
     price: Price;
 }
+export interface Category {
+    id: bigint;
+    name: string;
+    slug: string;
+}
+export interface OrderItem {
+    productId: ProductId;
+    quantity: bigint;
+    price: Price;
+}
+export type MediaUrl = string;
+export interface Order {
+    customerName: string;
+    paymentMethod: PaymentMethod;
+    orderStatus: OrderStatus;
+    city: string;
+    createdAt: bigint;
+    mobileNumber: string;
+    email: string;
+    orderId: string;
+    state: string;
+    totalAmount: Price;
+    items: Array<OrderItem>;
+    fullAddress: string;
+    pincode: string;
+}
+export type Price = number;
+export interface Collection {
+    id: bigint;
+    productIds: Array<ProductId>;
+    name: string;
+    description: string;
+}
+export type ProductId = bigint;
 export interface UserProfile {
     name: string;
 }
@@ -54,6 +59,11 @@ export enum OrderStatus {
     pending = "pending",
     delivered = "delivered",
     confirmed = "confirmed"
+}
+export enum PaymentMethod {
+    COD = "COD",
+    UPI = "UPI",
+    Card = "Card"
 }
 export enum UserRole {
     admin = "admin",
@@ -66,7 +76,7 @@ export interface backendInterface {
     addProduct(name: string, price: Price, image: MediaUrl, description: string, category: string, inventory: bigint): Promise<Product>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     assignProductToCollection(collectionId: bigint, productId: ProductId): Promise<void>;
-    createOrder(customerId: bigint, items: Array<OrderItem>, totalAmount: Price): Promise<Order>;
+    createOrder(customerName: string, mobileNumber: string, email: string, fullAddress: string, city: string, state: string, pincode: string, paymentMethod: PaymentMethod, items: Array<OrderItem>, totalAmount: Price): Promise<Order>;
     deleteCategory(id: bigint): Promise<void>;
     deleteCollection(id: bigint): Promise<void>;
     deleteProduct(id: ProductId): Promise<void>;
@@ -79,7 +89,7 @@ export interface backendInterface {
     getCallerUserProfile(): Promise<UserProfile | null>;
     getCallerUserRole(): Promise<UserRole>;
     getCollectionById(id: bigint): Promise<Collection | null>;
-    getOrderById(orderId: bigint): Promise<Order | null>;
+    getOrderById(orderId: string): Promise<Order | null>;
     getOrdersByStatus(status: OrderStatus): Promise<Array<Order>>;
     getUserProfile(user: Principal): Promise<UserProfile | null>;
     isCallerAdmin(): Promise<boolean>;
@@ -87,6 +97,6 @@ export interface backendInterface {
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateCategory(id: bigint, name: string, slug: string): Promise<Category>;
     updateCollection(id: bigint, name: string, description: string): Promise<Collection>;
-    updateOrderStatus(orderId: bigint, status: OrderStatus): Promise<Order>;
+    updateOrderStatus(orderId: string, status: OrderStatus): Promise<Order>;
     updateProduct(id: ProductId, name: string, price: Price, image: MediaUrl, description: string, category: string, inventory: bigint): Promise<Product>;
 }

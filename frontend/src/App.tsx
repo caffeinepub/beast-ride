@@ -12,6 +12,7 @@ import Home from './pages/Home';
 import Collection from './pages/Collection';
 import ProductDetail from './pages/ProductDetail';
 import Admin from './pages/Admin';
+import OrderConfirmation from './pages/OrderConfirmation';
 
 // Root route with layout
 const rootRoute = createRootRoute({
@@ -49,7 +50,19 @@ const adminRoute = createRoute({
   component: Admin,
 });
 
-const routeTree = rootRoute.addChildren([indexRoute, shopRoute, productRoute, adminRoute]);
+const orderConfirmationRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/order-confirmation',
+  component: OrderConfirmation,
+});
+
+const routeTree = rootRoute.addChildren([
+  indexRoute,
+  shopRoute,
+  productRoute,
+  adminRoute,
+  orderConfirmationRoute,
+]);
 
 const router = createRouter({ routeTree });
 

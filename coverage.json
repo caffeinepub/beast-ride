@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-25T17:47:58.412Z",
+  "generatedAt": "2026-02-26T16:49:25.633Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,34 +12,37 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "On the Admin page, display a login screen that instructs users to sign in exclusively via Internet Identity using Google as the authentication method. The login button should trigger Internet Identity's Google login flow. Any other login options (passkeys, other providers) should not be presented on the admin login screen.",
-        "status": "implemented",
-        "plannedFiles": [
-          "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/admin/GoogleLoginScreen.tsx"
-        ],
-        "matchedFiles": [
-          "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/admin/GoogleLoginScreen.tsx"
-        ]
-      },
-      {
-        "id": "REQ-2",
-        "summary": "In the backend Motoko actor, enforce that all admin operations (product CRUD, order management, category/collection management) validate the caller's principal before executing. Only principals that have previously been registered as admins (or the initial deployer) should be permitted to call admin-only functions.",
+        "summary": "Investigate and fix the backend admin access control logic so that the correct authenticated principal is recognized as an admin. The current behavior causes 'Access denied. Your account does not have admin privileges.' when a legitimate admin attempts to access the admin panel. Review how admin principals are stored and compared in the AccessControl mixin in backend/main.mo, and ensure the principal used for comparison matches the authenticated caller's principal exactly.",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
+      },
+      {
+        "id": "REQ-2",
+        "summary": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/Admin.tsx",
+          "frontend/src/components/admin/OrdersSection.tsx",
+          "frontend/src/components/admin/ProductsSection.tsx",
+          "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
+          "frontend/src/hooks/useQueries.ts",
+          "frontend/src/hooks/useMutations.ts"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/Admin.tsx",
+          "frontend/src/hooks/useQueries.ts"
+        ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
-    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/components/admin/GoogleLoginScreen.tsx",
+    "frontend/src/hooks/useQueries.ts",
     "frontend/src/pages/Admin.tsx",
     "project_state.json",
     "scratch/component-selection.json",

@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useGetAllOrders } from '../../hooks/useQueries';
 import { useUpdateOrderStatus } from '../../hooks/useMutations';
-import { OrderStatus } from '../../backend';
+import { useActor } from '../../hooks/useActor';
+import { useInternetIdentity } from '../../hooks/useInternetIdentity';
+import { OrderStatus, PaymentMethod } from '../../backend';
 import type { Order } from '../../backend';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
@@ -28,6 +30,12 @@ const STATUS_COLORS: Record<OrderStatus, { bg: string; text: string }> = {
   [OrderStatus.cancelled]: { bg: 'rgba(107,114,128,0.15)', text: '#9CA3AF' },
 };
 
+const PAYMENT_LABELS: Record<PaymentMethod, string> = {
+  [PaymentMethod.COD]: 'COD',
+  [PaymentMethod.UPI]: 'UPI',
+  [PaymentMethod.Card]: 'Card',
+};
+
 const ALL_STATUSES = [
   OrderStatus.pending,
   OrderStatus.confirmed,
@@ -40,7 +48,7 @@ function StatusBadge({ status }: { status: OrderStatus }) {
   const colors = STATUS_COLORS[status];
   return (
     <span
-      className="px-2 py-0.5 text-xs font-heading uppercase tracking-wider"
+      className="px-2 py-0.5 text-xs font-heading uppercase tracking-wider whitespace-nowrap"
       style={{
         backgroundColor: colors.bg,
         color: colors.text,
@@ -52,50 +60,96 @@ function StatusBadge({ status }: { status: OrderStatus }) {
   );
 }
 
-function formatDate(timestamp: bigint): string {
+function formatDateTime(timestamp: bigint): string {
   const ms = Number(timestamp) / 1_000_000;
-  return new Date(ms).toLocaleDateString('en-US', {
+  return new Date(ms).toLocaleString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
   });
 }
 
 function OrderRow({ order }: { order: Order }) {
   const updateStatus = useUpdateOrderStatus();
-  const [updatingId, setUpdatingId] = useState<bigint | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleStatusChange = async (status: OrderStatus) => {
-    setUpdatingId(order.orderId);
+    setIsUpdating(true);
     try {
       await updateStatus.mutateAsync({ orderId: order.orderId, status });
     } finally {
-      setUpdatingId(null);
+      setIsUpdating(false);
     }
   };
 
-  const isUpdating = updatingId === order.orderId || updateStatus.isPending;
+  const fullAddress = [order.fullAddress, order.city, order.state, order.pincode]
+    .filter(Boolean)
+    .join(', ');
 
   return (
     <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-      <td className="px-4 py-3 font-mono text-xs" style={{ color: '#C9C9C9' }}>
-        #{order.orderId.toString()}
+      {/* Order ID */}
+      <td className="px-4 py-3 font-mono text-xs whitespace-nowrap" style={{ color: '#D10000' }}>
+        #{order.orderId}
       </td>
-      <td className="px-4 py-3 text-sm" style={{ color: '#C9C9C9' }}>
-        Customer {order.customerId.toString()}
+
+      {/* Customer Name */}
+      <td className="px-4 py-3 text-sm whitespace-nowrap" style={{ color: '#ffffff' }}>
+        {order.customerName || '—'}
       </td>
-      <td className="px-4 py-3 text-sm text-center" style={{ color: '#C9C9C9' }}>
-        {order.items.length}
+
+      {/* Mobile */}
+      <td className="px-4 py-3 text-sm whitespace-nowrap" style={{ color: '#C9C9C9' }}>
+        {order.mobileNumber || '—'}
       </td>
-      <td className="px-4 py-3 text-sm font-heading" style={{ color: '#ffffff' }}>
-        ${order.totalAmount.toFixed(2)}
+
+      {/* Address */}
+      <td
+        className="px-4 py-3 text-xs"
+        style={{ color: 'rgba(201,201,201,0.7)', maxWidth: '180px' }}
+      >
+        <span className="line-clamp-2">{fullAddress || '—'}</span>
       </td>
+
+      {/* Products */}
+      <td className="px-4 py-3 text-xs" style={{ color: '#C9C9C9', maxWidth: '160px' }}>
+        <ul className="space-y-0.5">
+          {order.items.map((item, idx) => (
+            <li key={idx} className="whitespace-nowrap">
+              <span style={{ color: 'rgba(201,201,201,0.5)' }}>×{item.quantity.toString()}</span>{' '}
+              Product #{item.productId.toString()}
+            </li>
+          ))}
+        </ul>
+      </td>
+
+      {/* Payment Method */}
+      <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: '#C9C9C9' }}>
+        <span
+          className="px-2 py-0.5 font-heading uppercase tracking-wider"
+          style={{
+            backgroundColor: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+          }}
+        >
+          {PAYMENT_LABELS[order.paymentMethod] ?? String(order.paymentMethod)}
+        </span>
+      </td>
+
+      {/* Status */}
       <td className="px-4 py-3">
-        <StatusBadge status={order.status} />
+        <StatusBadge status={order.orderStatus} />
       </td>
-      <td className="px-4 py-3 text-xs" style={{ color: 'rgba(255,255,255,0.4)' }}>
-        {formatDate(order.createdAt)}
+
+      {/* Date & Time */}
+      <td className="px-4 py-3 text-xs whitespace-nowrap" style={{ color: 'rgba(255,255,255,0.4)' }}>
+        {formatDateTime(order.createdAt)}
       </td>
+
+      {/* Action */}
       <td className="px-4 py-3">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -107,6 +161,7 @@ function OrderRow({ order }: { order: Order }) {
                 border: '1px solid rgba(255,255,255,0.1)',
                 color: '#C9C9C9',
                 cursor: 'pointer',
+                minHeight: '32px',
               }}
             >
               {isUpdating ? (
@@ -139,13 +194,23 @@ function OrderRow({ order }: { order: Order }) {
 }
 
 export default function OrdersSection() {
+  const { isFetching: actorFetching } = useActor();
+  const { identity, isInitializing } = useInternetIdentity();
   const { data: orders, isLoading, error } = useGetAllOrders();
   const [filterStatus, setFilterStatus] = useState<OrderStatus | 'all'>('all');
+
+  // Show loading while identity is initializing or actor is being set up with identity
+  const isSettingUp = isInitializing || actorFetching || (!orders && !error && !!identity);
 
   const filteredOrders =
     filterStatus === 'all'
       ? (orders ?? [])
-      : (orders ?? []).filter((o) => o.status === filterStatus);
+      : (orders ?? []).filter((o) => o.orderStatus === filterStatus);
+
+  // Determine if the error is an authorization error
+  const isAuthError =
+    error &&
+    (error.message?.includes('Unauthorized') || error.message?.includes('admin'));
 
   return (
     <div className="p-6">
@@ -177,7 +242,7 @@ export default function OrdersSection() {
           All ({orders?.length ?? 0})
         </button>
         {ALL_STATUSES.map((s) => {
-          const count = (orders ?? []).filter((o) => o.status === s).length;
+          const count = (orders ?? []).filter((o) => o.orderStatus === s).length;
           const isActive = filterStatus === s;
           return (
             <button
@@ -205,7 +270,7 @@ export default function OrdersSection() {
           overflowX: 'auto',
         }}
       >
-        {isLoading ? (
+        {isLoading || isSettingUp ? (
           <div className="p-6 space-y-3">
             {[...Array(5)].map((_, i) => (
               <Skeleton key={i} className="h-10 w-full" style={{ backgroundColor: '#1A1A1A' }} />
@@ -214,7 +279,9 @@ export default function OrdersSection() {
         ) : error ? (
           <div className="p-8 text-center">
             <p className="text-sm" style={{ color: '#D10000' }}>
-              Failed to load orders. Make sure you have admin access.
+              {isAuthError
+                ? 'Access denied. Your account does not have admin privileges.'
+                : 'Failed to load orders. Please try refreshing the page.'}
             </p>
           </div>
         ) : filteredOrders.length === 0 ? (
@@ -227,22 +294,30 @@ export default function OrdersSection() {
           <table className="w-full">
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
-                {['Order ID', 'Customer', 'Items', 'Total', 'Status', 'Date', 'Action'].map(
-                  (h) => (
-                    <th
-                      key={h}
-                      className="px-4 py-3 text-left text-xs font-heading uppercase tracking-widest"
-                      style={{ color: 'rgba(255,255,255,0.4)' }}
-                    >
-                      {h}
-                    </th>
-                  )
-                )}
+                {[
+                  'Order ID',
+                  'Customer',
+                  'Mobile',
+                  'Address',
+                  'Products',
+                  'Payment',
+                  'Status',
+                  'Date & Time',
+                  'Action',
+                ].map((h) => (
+                  <th
+                    key={h}
+                    className="px-4 py-3 text-left text-xs font-heading uppercase tracking-widest whitespace-nowrap"
+                    style={{ color: 'rgba(255,255,255,0.4)' }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
               {filteredOrders.map((order) => (
-                <OrderRow key={order.orderId.toString()} order={order} />
+                <OrderRow key={order.orderId} order={order} />
               ))}
             </tbody>
           </table>

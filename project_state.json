@@ -1,19 +1,20 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "E-commerce app with order management, product listing backend, and an admin panel secured with Google authentication (Internet Identity via Google).",
+  "summary": "Project involves an admin panel with order display functionality. A known issue exists where admin privilege access is being denied.",
   "architectural_notes": [
-    "Admin panel access restricted to Google-authenticated users via Internet Identity",
-    "Backend built on Internet Computer using Motoko; includes order management and product listing"
+    "Admin panel requires privilege/role management for user access control"
   ],
-  "known_issues": [],
-  "isFixRequest": false,
+  "known_issues": [
+    "Admin access denied error: users receiving 'Access denied. Your account does not have admin privileges.' when attempting to access admin panel"
+  ],
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-on-the-admin-page-display-a-login-screen-that-instructs-users-to-sign-in-exclusively-via-internet-identity-using-google-as-the-authentication-method-the-login-button-should-trigger-internet-identity-s-google-login-flow-any-other-login-options-passkeys-other-providers-should-not-be-presented-on-the-admin-login-screen",
-      "title": "On the Admin page, display a login screen that instructs users to sign in exclusively via Internet Identity using Google as the authentication method. The login button should trigger Internet Identity's Google login flow. Any other login options (passkeys, other providers) should not be presented on the admin login screen.",
+      "id": "feature-ensure-the-frontend-admin-dashboard-in-frontend-src-pages-admin-tsx-and-frontend-src-components-admin-orderssection-tsx-correctly-passes-the-authenticated-identity-when-calling-admin-only-backend-methods-verify-that-the-actor-used-for-admin-queries-is-always-the-authenticated-actor-not-anonymous-and-that-query-mutation-hooks-in-usequeries-ts-and-usemutations-ts-are-enabled-only-when-a-valid-authenticated-identity-is-present",
+      "title": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
       "reqIds": [
-        "REQ-1"
+        "REQ-2"
       ],
       "version": 1
     }
@@ -21,27 +22,14 @@
   "new_feature_requests": [
     {
       "id": "AR-1",
-      "summary": "Secure admin panel login using Google authentication only",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Backend for order management and product listing",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "In the backend Motoko actor, enforce that all admin operations (product CRUD, order management, category/collection management) validate the caller's principal before executing. Only principals that have previously been registered as admins (or the initial deployer) should be permitted to call admin-only functions.",
+      "summary": "Investigate and fix the backend admin access control logic so that the correct authenticated principal is recognized as an admin. The current behavior causes 'Access denied. Your account does not have admin privileges.' when a legitimate admin attempts to access the admin panel. Review how admin principals are stored and compared in the AccessControl mixin in backend/main.mo, and ensure the principal used for comparison matches the authenticated caller's principal exactly.",
       "reqIds": [
-        "REQ-2"
+        "REQ-1"
       ],
       "status": "pending"
     }
   ],
-  "gameProjectType": "none",
-  "projectName": "E-commerce Admin Panel",
+  "projectName": "Fix admin privilege access denied error",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

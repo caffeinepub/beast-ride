@@ -1,14 +1,14 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
 import type { OrderItem } from '../backend';
-import { OrderStatus } from '../backend';
+import { OrderStatus, PaymentMethod } from '../backend';
 
 export function useUpdateOrderStatus() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ orderId, status }: { orderId: bigint; status: OrderStatus }) => {
+    mutationFn: async ({ orderId, status }: { orderId: string; status: OrderStatus }) => {
       if (!actor) throw new Error('Actor not available');
       return actor.updateOrderStatus(orderId, status);
     },
@@ -233,22 +233,38 @@ export function useRemoveProductFromCollection() {
   });
 }
 
+export interface CreateOrderParams {
+  customerName: string;
+  mobileNumber: string;
+  email: string;
+  fullAddress: string;
+  city: string;
+  state: string;
+  pincode: string;
+  paymentMethod: PaymentMethod;
+  items: Array<OrderItem>;
+  totalAmount: number;
+}
+
 export function useCreateOrder() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      customerId,
-      items,
-      totalAmount,
-    }: {
-      customerId: bigint;
-      items: Array<OrderItem>;
-      totalAmount: number;
-    }) => {
+    mutationFn: async (params: CreateOrderParams) => {
       if (!actor) throw new Error('Actor not available');
-      return actor.createOrder(customerId, items, totalAmount);
+      return actor.createOrder(
+        params.customerName,
+        params.mobileNumber,
+        params.email,
+        params.fullAddress,
+        params.city,
+        params.state,
+        params.pincode,
+        params.paymentMethod,
+        params.items,
+        params.totalAmount,
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['orders'] });

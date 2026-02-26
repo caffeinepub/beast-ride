@@ -47,6 +47,11 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const PaymentMethod = IDL.Variant({
+  'COD' : IDL.Null,
+  'UPI' : IDL.Null,
+  'Card' : IDL.Null,
+});
 export const OrderItem = IDL.Record({
   'productId' : ProductId,
   'quantity' : IDL.Nat,
@@ -59,15 +64,20 @@ export const OrderStatus = IDL.Variant({
   'delivered' : IDL.Null,
   'confirmed' : IDL.Null,
 });
-export const Time = IDL.Int;
 export const Order = IDL.Record({
-  'status' : OrderStatus,
-  'createdAt' : Time,
-  'orderId' : IDL.Nat,
-  'updatedAt' : Time,
+  'customerName' : IDL.Text,
+  'paymentMethod' : PaymentMethod,
+  'orderStatus' : OrderStatus,
+  'city' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'mobileNumber' : IDL.Text,
+  'email' : IDL.Text,
+  'orderId' : IDL.Text,
+  'state' : IDL.Text,
   'totalAmount' : Price,
-  'customerId' : IDL.Nat,
   'items' : IDL.Vec(OrderItem),
+  'fullAddress' : IDL.Text,
+  'pincode' : IDL.Text,
 });
 export const UserProfile = IDL.Record({ 'name' : IDL.Text });
 
@@ -108,7 +118,22 @@ export const idlService = IDL.Service({
     ),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'assignProductToCollection' : IDL.Func([IDL.Nat, ProductId], [], []),
-  'createOrder' : IDL.Func([IDL.Nat, IDL.Vec(OrderItem), Price], [Order], []),
+  'createOrder' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        PaymentMethod,
+        IDL.Vec(OrderItem),
+        Price,
+      ],
+      [Order],
+      [],
+    ),
   'deleteCategory' : IDL.Func([IDL.Nat], [], []),
   'deleteCollection' : IDL.Func([IDL.Nat], [], []),
   'deleteProduct' : IDL.Func([ProductId], [], []),
@@ -116,12 +141,12 @@ export const idlService = IDL.Service({
   'filterByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
   'getAllCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
   'getAllCollections' : IDL.Func([], [IDL.Vec(Collection)], ['query']),
-  'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+  'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], []),
   'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
   'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getCollectionById' : IDL.Func([IDL.Nat], [IDL.Opt(Collection)], ['query']),
-  'getOrderById' : IDL.Func([IDL.Nat], [IDL.Opt(Order)], ['query']),
+  'getOrderById' : IDL.Func([IDL.Text], [IDL.Opt(Order)], ['query']),
   'getOrdersByStatus' : IDL.Func([OrderStatus], [IDL.Vec(Order)], ['query']),
   'getUserProfile' : IDL.Func(
       [IDL.Principal],
@@ -137,7 +162,7 @@ export const idlService = IDL.Service({
       [Collection],
       [],
     ),
-  'updateOrderStatus' : IDL.Func([IDL.Nat, OrderStatus], [Order], []),
+  'updateOrderStatus' : IDL.Func([IDL.Text, OrderStatus], [Order], []),
   'updateProduct' : IDL.Func(
       [ProductId, IDL.Text, Price, MediaUrl, IDL.Text, IDL.Text, IDL.Nat],
       [Product],
@@ -187,6 +212,11 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const PaymentMethod = IDL.Variant({
+    'COD' : IDL.Null,
+    'UPI' : IDL.Null,
+    'Card' : IDL.Null,
+  });
   const OrderItem = IDL.Record({
     'productId' : ProductId,
     'quantity' : IDL.Nat,
@@ -199,15 +229,20 @@ export const idlFactory = ({ IDL }) => {
     'delivered' : IDL.Null,
     'confirmed' : IDL.Null,
   });
-  const Time = IDL.Int;
   const Order = IDL.Record({
-    'status' : OrderStatus,
-    'createdAt' : Time,
-    'orderId' : IDL.Nat,
-    'updatedAt' : Time,
+    'customerName' : IDL.Text,
+    'paymentMethod' : PaymentMethod,
+    'orderStatus' : OrderStatus,
+    'city' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'mobileNumber' : IDL.Text,
+    'email' : IDL.Text,
+    'orderId' : IDL.Text,
+    'state' : IDL.Text,
     'totalAmount' : Price,
-    'customerId' : IDL.Nat,
     'items' : IDL.Vec(OrderItem),
+    'fullAddress' : IDL.Text,
+    'pincode' : IDL.Text,
   });
   const UserProfile = IDL.Record({ 'name' : IDL.Text });
   
@@ -248,7 +283,22 @@ export const idlFactory = ({ IDL }) => {
       ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'assignProductToCollection' : IDL.Func([IDL.Nat, ProductId], [], []),
-    'createOrder' : IDL.Func([IDL.Nat, IDL.Vec(OrderItem), Price], [Order], []),
+    'createOrder' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          PaymentMethod,
+          IDL.Vec(OrderItem),
+          Price,
+        ],
+        [Order],
+        [],
+      ),
     'deleteCategory' : IDL.Func([IDL.Nat], [], []),
     'deleteCollection' : IDL.Func([IDL.Nat], [], []),
     'deleteProduct' : IDL.Func([ProductId], [], []),
@@ -256,12 +306,12 @@ export const idlFactory = ({ IDL }) => {
     'filterByCategory' : IDL.Func([IDL.Text], [IDL.Vec(Product)], ['query']),
     'getAllCategories' : IDL.Func([], [IDL.Vec(Category)], ['query']),
     'getAllCollections' : IDL.Func([], [IDL.Vec(Collection)], ['query']),
-    'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], ['query']),
+    'getAllOrders' : IDL.Func([], [IDL.Vec(Order)], []),
     'getAllProducts' : IDL.Func([], [IDL.Vec(Product)], ['query']),
     'getCallerUserProfile' : IDL.Func([], [IDL.Opt(UserProfile)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getCollectionById' : IDL.Func([IDL.Nat], [IDL.Opt(Collection)], ['query']),
-    'getOrderById' : IDL.Func([IDL.Nat], [IDL.Opt(Order)], ['query']),
+    'getOrderById' : IDL.Func([IDL.Text], [IDL.Opt(Order)], ['query']),
     'getOrdersByStatus' : IDL.Func([OrderStatus], [IDL.Vec(Order)], ['query']),
     'getUserProfile' : IDL.Func(
         [IDL.Principal],
@@ -277,7 +327,7 @@ export const idlFactory = ({ IDL }) => {
         [Collection],
         [],
       ),
-    'updateOrderStatus' : IDL.Func([IDL.Nat, OrderStatus], [Order], []),
+    'updateOrderStatus' : IDL.Func([IDL.Text, OrderStatus], [Order], []),
     'updateProduct' : IDL.Func(
         [ProductId, IDL.Text, Price, MediaUrl, IDL.Text, IDL.Text, IDL.Nat],
         [Product],

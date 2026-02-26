@@ -1,15 +1,11 @@
 # Specification
 
 ## Summary
-**Goal:** Restrict the admin panel to only allow login via Internet Identity using Google as the authentication method, and enforce principal-based authorization on all backend admin operations.
+**Goal:** Fix the "Access denied. Your account does not have admin privileges." error that prevents legitimate admins from accessing the admin panel.
 
 **Planned changes:**
-- Replace the admin login screen with a single "Sign in with Google" button that triggers the Internet Identity Google login flow; remove any other login options.
-- Unauthenticated users are shown only the login screen and cannot access any admin content.
-- After successful Google-based Internet Identity login, the user is granted access to the admin dashboard.
-- In the backend Motoko actor, add caller principal validation to all admin-only functions (product CRUD, order management, category/collection management).
-- Automatically grant admin access to the initial deployer principal.
-- Add a mechanism to whitelist additional admin principals.
-- Unauthorized or anonymous callers receive a clear authorization error.
+- Review and fix the admin principal comparison logic in the `AccessControl` mixin in `backend/main.mo` so the stored admin principal matches the authenticated caller's principal exactly.
+- Ensure the frontend admin dashboard (`Admin.tsx`) and `OrdersSection.tsx` use the authenticated actor (not anonymous) for all admin-only backend calls.
+- Update `useQueries.ts` and `useMutations.ts` so admin queries and mutations are only enabled when a valid authenticated identity is present.
 
-**User-visible outcome:** Admin users can only access the admin panel by signing in with Google via Internet Identity; all other login options are hidden, and unauthorized callers are blocked from admin backend functions.
+**User-visible outcome:** An authenticated admin user can log in and access the admin panel without receiving an access denied error, while non-admin users remain correctly restricted.

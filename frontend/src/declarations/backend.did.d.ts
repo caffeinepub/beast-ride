@@ -19,13 +19,19 @@ export interface Collection {
 }
 export type MediaUrl = string;
 export interface Order {
-  'status' : OrderStatus,
-  'createdAt' : Time,
-  'orderId' : bigint,
-  'updatedAt' : Time,
+  'customerName' : string,
+  'paymentMethod' : PaymentMethod,
+  'orderStatus' : OrderStatus,
+  'city' : string,
+  'createdAt' : bigint,
+  'mobileNumber' : string,
+  'email' : string,
+  'orderId' : string,
+  'state' : string,
   'totalAmount' : Price,
-  'customerId' : bigint,
   'items' : Array<OrderItem>,
+  'fullAddress' : string,
+  'pincode' : string,
 }
 export interface OrderItem {
   'productId' : ProductId,
@@ -37,6 +43,9 @@ export type OrderStatus = { 'shipped' : null } |
   { 'pending' : null } |
   { 'delivered' : null } |
   { 'confirmed' : null };
+export type PaymentMethod = { 'COD' : null } |
+  { 'UPI' : null } |
+  { 'Card' : null };
 export type Price = number;
 export interface Product {
   'id' : ProductId,
@@ -48,7 +57,6 @@ export interface Product {
   'price' : Price,
 }
 export type ProductId = bigint;
-export type Time = bigint;
 export interface UserProfile { 'name' : string }
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
@@ -89,7 +97,21 @@ export interface _SERVICE {
   >,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'assignProductToCollection' : ActorMethod<[bigint, ProductId], undefined>,
-  'createOrder' : ActorMethod<[bigint, Array<OrderItem>, Price], Order>,
+  'createOrder' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      string,
+      PaymentMethod,
+      Array<OrderItem>,
+      Price,
+    ],
+    Order
+  >,
   'deleteCategory' : ActorMethod<[bigint], undefined>,
   'deleteCollection' : ActorMethod<[bigint], undefined>,
   'deleteProduct' : ActorMethod<[ProductId], undefined>,
@@ -102,7 +124,7 @@ export interface _SERVICE {
   'getCallerUserProfile' : ActorMethod<[], [] | [UserProfile]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCollectionById' : ActorMethod<[bigint], [] | [Collection]>,
-  'getOrderById' : ActorMethod<[bigint], [] | [Order]>,
+  'getOrderById' : ActorMethod<[string], [] | [Order]>,
   'getOrdersByStatus' : ActorMethod<[OrderStatus], Array<Order>>,
   'getUserProfile' : ActorMethod<[Principal], [] | [UserProfile]>,
   'isCallerAdmin' : ActorMethod<[], boolean>,
@@ -110,7 +132,7 @@ export interface _SERVICE {
   'saveCallerUserProfile' : ActorMethod<[UserProfile], undefined>,
   'updateCategory' : ActorMethod<[bigint, string, string], Category>,
   'updateCollection' : ActorMethod<[bigint, string, string], Collection>,
-  'updateOrderStatus' : ActorMethod<[bigint, OrderStatus], Order>,
+  'updateOrderStatus' : ActorMethod<[string, OrderStatus], Order>,
   'updateProduct' : ActorMethod<
     [ProductId, string, Price, MediaUrl, string, string, bigint],
     Product

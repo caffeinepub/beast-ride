@@ -1,57 +1,53 @@
 {
   "kind": "build_request",
-  "title": "Restrict admin panel login to Google authenticator (Internet Identity with Google)",
-  "projectName": "Beast Ride Admin",
-  "priority": "normal",
+  "title": "Fix admin privilege access denied error",
+  "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "On the Admin page, display a login screen that instructs users to sign in exclusively via Internet Identity using Google as the authentication method. The login button should trigger Internet Identity's Google login flow. Any other login options (passkeys, other providers) should not be presented on the admin login screen.",
-      "target": "frontend",
+      "text": "Investigate and fix the backend admin access control logic so that the correct authenticated principal is recognized as an admin. The current behavior causes 'Access denied. Your account does not have admin privileges.' when a legitimate admin attempts to access the admin panel. Review how admin principals are stored and compared in the AccessControl mixin in backend/main.mo, and ensure the principal used for comparison matches the authenticated caller's principal exactly.",
+      "target": "backend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-1"
         ],
         "quotes": [
-          "amin panel only can login throuugh google authenticater coe"
+          "Access denied. Your account does not have admin privileges."
         ]
       },
       "acceptanceCriteria": [
-        "The admin login screen shows a single 'Sign in with Google' button that launches Internet Identity.",
-        "Unauthenticated users cannot access any admin content — they are shown only the login screen.",
-        "After successful Google-based Internet Identity login, the user is granted access to the admin dashboard.",
-        "No passkey or other provider login options are presented on the admin login page."
+        "An authenticated admin user can access the admin panel without receiving an 'Access denied' error.",
+        "The backend admin guard correctly identifies the calling principal as an admin when it should.",
+        "Non-admin principals are still correctly denied access."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "In the backend Motoko actor, enforce that all admin operations (product CRUD, order management, category/collection management) validate the caller's principal before executing. Only principals that have previously been registered as admins (or the initial deployer) should be permitted to call admin-only functions.",
-      "target": "backend",
+      "text": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
+      "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-recent"
+          "msg-1"
         ],
         "quotes": [
-          "amin panel only can login throuugh google authenticater coe"
+          "Access denied. Your account does not have admin privileges."
         ]
       },
       "acceptanceCriteria": [
-        "Admin-only backend functions reject calls from anonymous or unauthorized principals with an error.",
-        "The initial deployer principal is automatically granted admin access.",
-        "A mechanism exists to whitelist additional admin principals.",
-        "Non-admin callers receive a clear authorization error rather than partial data."
+        "Admin queries and mutations are only triggered when the user is authenticated via Internet Identity.",
+        "The authenticated actor (not anonymous) is used for all admin panel API calls.",
+        "The admin panel displays orders, products, and categories successfully after login without authorization errors."
       ]
     }
   ],
   "constraints": [
-    "Authentication must use Internet Identity — traditional email/password is not supported on this platform.",
-    "Do not modify files in frontend/src/hooks/useInternetIdentity.ts or frontend/src/hooks/useActor.ts.",
-    "Do not modify files under frontend/src/components/ui."
+    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
+    "Preserve the single-actor architecture in backend/main.mo."
   ],
   "nonGoals": [
-    "Email and password authentication.",
-    "Support for non-Google login providers on the admin panel.",
-    "Any changes to the customer-facing storefront authentication flow."
+    "Adding new admin features or changing the admin UI layout.",
+    "Changing the authentication provider from Internet Identity.",
+    "Modifying non-admin user flows."
   ],
   "imageRequirements": {
     "required": [],

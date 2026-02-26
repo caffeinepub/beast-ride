@@ -1,27 +1,46 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Restrict Admin Panel Login to Google Authenticator (Internet Identity with Google)",
+  "title": "Fix admin privilege access denied error",
   "requirements": [
     {
-      "id": "REQ-1",
-      "summary": "Display a Google-only login screen on the Admin page that restricts authentication to Internet Identity using Google, blocking access to unauthenticated users and hiding all other login provider options.",
+      "id": "REQ-2",
+      "summary": "Ensure the frontend admin dashboard correctly passes the authenticated identity when calling admin-only backend methods and that actor is always authenticated (not anonymous) for admin queries",
       "acceptanceCriteria": [
-        "The admin login screen shows a single 'Sign in with Google' button that launches Internet Identity.",
-        "Unauthenticated users cannot access any admin content — they are shown only the login screen.",
-        "After successful Google-based Internet Identity login, the user is granted access to the admin dashboard.",
-        "No passkey or other provider login options are presented on the admin login page."
+        "Admin queries and mutations are only triggered when the user is authenticated via Internet Identity.",
+        "The authenticated actor (not anonymous) is used for all admin panel API calls.",
+        "The admin panel displays orders, products, and categories successfully after login without authorization errors."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/Admin.tsx",
           "operation": "modify",
-          "description": "Replace the current authentication flow with a dedicated login screen that only presents a 'Sign in with Google' button. Use the useInternetIdentity hook to trigger login with Google-specific parameters. Gate all admin dashboard content behind successful authentication. Ensure the login screen is the only visible content when the user is not authenticated. After successful login, display the existing admin sections (sidebar, orders, products, categories/collections)."
+          "description": "Verify that the component only renders the admin dashboard sections when the user is authenticated. Ensure that the actor used for all admin queries is the authenticated actor (not anonymous) by checking the identity state from useInternetIdentity. Add additional safety checks to prevent rendering admin content or triggering admin API calls when the user is not authenticated. Review the error handling to ensure authorization errors are displayed gracefully to the user."
         },
         {
-          "path": "frontend/src/components/admin/GoogleLoginScreen.tsx",
-          "operation": "create",
-          "description": "Create a centered login screen component that displays a branded 'Sign in with Google' button. The button should call the Internet Identity login flow with Google as the required authentication method. Include clear messaging that admin access requires Google authentication via Internet Identity. Style the component consistently with the Beast Ride dark theme (red accents, dark background). Show a loading state while login is in progress. Handle login errors gracefully with user-friendly error messages."
+          "path": "frontend/src/components/admin/OrdersSection.tsx",
+          "operation": "modify",
+          "description": "Review the component to ensure that the getAllOrders query and updateOrderStatus mutation are only enabled when an authenticated actor is available. Verify that the actor passed to these hooks is the authenticated actor from useActor and that the hooks are disabled when the user is not authenticated. Add error handling for authorization failures that display user-friendly messages."
+        },
+        {
+          "path": "frontend/src/components/admin/ProductsSection.tsx",
+          "operation": "modify",
+          "description": "Review the component to ensure that getAllProducts query and product CRUD mutations (add, update, delete) are only enabled when an authenticated actor is available. Verify that the actor passed to these hooks is the authenticated actor from useActor and that the hooks are disabled when the user is not authenticated. Add error handling for authorization failures."
+        },
+        {
+          "path": "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
+          "operation": "modify",
+          "description": "Review the component to ensure that category and collection queries (getAllCategories, getAllCollections) and CRUD mutations are only enabled when an authenticated actor is available. Verify that the actor passed to these hooks is the authenticated actor from useActor and that the hooks are disabled when the user is not authenticated. Add error handling for authorization failures that display user-friendly messages to the admin."
+        },
+        {
+          "path": "frontend/src/hooks/useQueries.ts",
+          "operation": "modify",
+          "description": "Review all admin-only query hooks (getAllOrders, getAllCategories, getAllCollections) to ensure they are only enabled when both an authenticated actor is available (!!actor) and the actor is not fetching (actorFetching is false). Verify that the enabled flag prevents queries from running with an anonymous actor. Consider adding explicit checks that the identity is present before enabling admin queries."
+        },
+        {
+          "path": "frontend/src/hooks/useMutations.ts",
+          "operation": "modify",
+          "description": "Review all admin-only mutation hooks (updateOrderStatus, addProduct, updateProduct, deleteProduct, addCategory, updateCategory, deleteCategory, addCollection, updateCollection, deleteCollection) to ensure they throw a clear error or are disabled when the actor is not available or is anonymous. Verify that mutations are called only after authentication is confirmed. Add error handling that catches backend authorization traps and displays user-friendly error messages."
         }
       ]
     }
