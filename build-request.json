@@ -1,53 +1,75 @@
 {
   "kind": "build_request",
-  "title": "Fix admin privilege access denied error",
+  "title": "Add admin principal reset functionality",
+  "projectName": "Beast Ride Admin",
   "priority": "high",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Investigate and fix the backend admin access control logic so that the correct authenticated principal is recognized as an admin. The current behavior causes 'Access denied. Your account does not have admin privileges.' when a legitimate admin attempts to access the admin panel. Review how admin principals are stored and compared in the AccessControl mixin in backend/main.mo, and ensure the principal used for comparison matches the authenticated caller's principal exactly.",
+      "text": "Add a backend function `resetAdminPrincipal` that clears the stored admin principal ID, allowing a new principal to claim admin access. This function should only be callable by the current admin principal or, if no valid admin exists, should allow a forced reset via a secure mechanism (e.g., a one-time reset flag or hardcoded canister controller check).",
       "target": "backend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-3"
         ],
         "quotes": [
-          "Access denied. Your account does not have admin privileges."
+          "rest principle id so that i can claim rmove aold ppriciple iad"
         ]
       },
       "acceptanceCriteria": [
-        "An authenticated admin user can access the admin panel without receiving an 'Access denied' error.",
-        "The backend admin guard correctly identifies the calling principal as an admin when it should.",
-        "Non-admin principals are still correctly denied access."
+        "A `resetAdminPrincipal` function exists in the backend actor that clears the stored admin principal.",
+        "After calling reset, the admin claim endpoint succeeds for a new principal.",
+        "The reset function is protected so it cannot be called arbitrarily by any anonymous user."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
+      "text": "Add a 'Reset Admin Access' button on the Admin dashboard page (`frontend/src/pages/Admin.tsx`) that calls the `resetAdminPrincipal` backend function and then immediately allows the current logged-in principal to re-claim admin access. Display a confirmation dialog before executing the reset to prevent accidental use.",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-3"
         ],
         "quotes": [
-          "Access denied. Your account does not have admin privileges."
+          "rest principle id so that i can claim rmove aold ppriciple iad"
         ]
       },
       "acceptanceCriteria": [
-        "Admin queries and mutations are only triggered when the user is authenticated via Internet Identity.",
-        "The authenticated actor (not anonymous) is used for all admin panel API calls.",
-        "The admin panel displays orders, products, and categories successfully after login without authorization errors."
+        "A 'Reset Admin Access' button is visible in the admin dashboard UI.",
+        "Clicking the button shows a confirmation dialog warning the user that current admin access will be revoked.",
+        "On confirmation, the reset mutation is called and the current principal can immediately claim admin again.",
+        "Success and error states are communicated to the user via toast notifications.",
+        "The button is only shown when the user is authenticated via Internet Identity."
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "text": "On the Admin page (`frontend/src/pages/Admin.tsx`), when the 'Admin access has already been claimed' error is encountered and the user is authenticated, display a user-friendly message explaining the situation and show an option to reset admin access rather than a dead-end error state.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-3"
+        ],
+        "quotes": [
+          "Admin access has already been claimed. Contact the system administrator."
+        ]
+      },
+      "acceptanceCriteria": [
+        "When the claim-admin mutation returns an 'already claimed' error, the UI shows a clear explanation message.",
+        "A 'Reset Admin Access' action is presented inline on this error state.",
+        "The user is not stuck at a dead-end error with no recovery path."
       ]
     }
   ],
   "constraints": [
     "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "Preserve the single-actor architecture in backend/main.mo."
+    "All backend changes must remain within the single actor in backend/main.mo.",
+    "The reset mechanism must not allow completely anonymous/unauthenticated callers to reset admin access without any authorization."
   ],
   "nonGoals": [
-    "Adding new admin features or changing the admin UI layout.",
-    "Changing the authentication provider from Internet Identity.",
-    "Modifying non-admin user flows."
+    "Replacing the Internet Identity authentication flow.",
+    "Adding multiple admin roles or role-based access control.",
+    "Changing the existing admin login page (AdminLogin.tsx) credentials."
   ],
   "imageRequirements": {
     "required": [],

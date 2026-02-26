@@ -1,48 +1,57 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-26T16:49:25.633Z",
+  "generatedAt": "2026-02-26T17:42:50.872Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
   },
   "requirements": {
-    "total": 2,
-    "implemented": 1,
+    "total": 3,
+    "implemented": 2,
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Investigate and fix the backend admin access control logic so that the correct authenticated principal is recognized as an admin. The current behavior causes 'Access denied. Your account does not have admin privileges.' when a legitimate admin attempts to access the admin panel. Review how admin principals are stored and compared in the AccessControl mixin in backend/main.mo, and ensure the principal used for comparison matches the authenticated caller's principal exactly.",
+        "summary": "Add a backend function `resetAdminPrincipal` that clears the stored admin principal ID, allowing a new principal to claim admin access. This function should only be callable by the current admin principal or, if no valid admin exists, should allow a forced reset via a secure mechanism (e.g., a one-time reset flag or hardcoded canister controller check).",
         "status": "unknown",
         "plannedFiles": [],
         "matchedFiles": []
       },
       {
         "id": "REQ-2",
-        "summary": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
+        "summary": "Add a 'Reset Admin Access' button on the Admin dashboard page (`frontend/src/pages/Admin.tsx`) that calls the `resetAdminPrincipal` backend function and then immediately allows the current logged-in principal to re-claim admin access. Display a confirmation dialog before executing the reset to prevent accidental use.",
         "status": "implemented",
         "plannedFiles": [
+          "frontend/src/hooks/useMutations.ts",
           "frontend/src/pages/Admin.tsx",
-          "frontend/src/components/admin/OrdersSection.tsx",
-          "frontend/src/components/admin/ProductsSection.tsx",
-          "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
-          "frontend/src/hooks/useQueries.ts",
-          "frontend/src/hooks/useMutations.ts"
+          "frontend/src/components/admin/ResetAdminDialog.tsx"
         ],
         "matchedFiles": [
           "frontend/src/pages/Admin.tsx",
-          "frontend/src/hooks/useQueries.ts"
+          "frontend/src/components/admin/ResetAdminDialog.tsx"
+        ]
+      },
+      {
+        "id": "REQ-3",
+        "summary": "On the Admin page (`frontend/src/pages/Admin.tsx`), when the 'Admin access has already been claimed' error is encountered and the user is authenticated, display a user-friendly message explaining the situation and show an option to reset admin access rather than a dead-end error state.",
+        "status": "implemented",
+        "plannedFiles": [
+          "frontend/src/pages/Admin.tsx"
+        ],
+        "matchedFiles": [
+          "frontend/src/pages/Admin.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
     "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/hooks/useQueries.ts",
+    "frontend/src/components/admin/ResetAdminDialog.tsx",
     "frontend/src/pages/Admin.tsx",
     "project_state.json",
     "scratch/component-selection.json",

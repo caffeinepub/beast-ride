@@ -2,10 +2,10 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-ensure-the-frontend-admin-dashboard-in-frontend-src-pages-admin-tsx-and-frontend-src-components-admin-orderssection-tsx-correctly-passes-the-authenticated-identity-when-calling-admin-only-backend-methods-verify-that-the-actor-used-for-admin-queries-is-always-the-authenticated-actor-not-anonymous-and-that-query-mutation-hooks-in-usequeries-ts-and-usemutations-ts-are-enabled-only-when-a-valid-authenticated-identity-is-present",
-      "featureTitle": "Ensure the frontend admin dashboard in frontend/src/pages/Admin.tsx and frontend/src/components/admin/OrdersSection.tsx correctly passes the authenticated identity when calling admin-only backend methods. Verify that the actor used for admin queries is always the authenticated actor (not anonymous), and that query/mutation hooks in useQueries.ts and useMutations.ts are enabled only when a valid authenticated identity is present.",
+      "featureId": "feature-add-a-reset-admin-access-button-on-the-admin-dashboard-page-frontend-src-pages-admin-tsx-that-calls-the-resetadminprincipal-backend-function-and-then-immediately-allows-the-current-logged-in-principal-to-re-claim-admin-access-display-a-confirmation-dialog-before-executing-the-reset-to-prevent-accidental-use",
+      "featureTitle": "Add a 'Reset Admin Access' button on the Admin dashboard page (`frontend/src/pages/Admin.tsx`) that calls the `resetAdminPrincipal` backend function and then immediately allows the current logged-in principal to re-claim admin access. Display a confirmation dialog before executing the reset to prevent accidental use.",
       "files": [
-        "frontend/src/hooks/useQueries.ts",
+        "frontend/src/components/admin/ResetAdminDialog.tsx",
         "frontend/src/pages/Admin.tsx"
       ],
       "components": [
@@ -19,6 +19,26 @@
       ],
       "testIds": [
         "REQ-2"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-on-the-admin-page-frontend-src-pages-admin-tsx-when-the-admin-access-has-already-been-claimed-error-is-encountered-and-the-user-is-authenticated-display-a-user-friendly-message-explaining-the-situation-and-show-an-option-to-reset-admin-access-rather-than-a-dead-end-error-state",
+      "featureTitle": "On the Admin page (`frontend/src/pages/Admin.tsx`), when the 'Admin access has already been claimed' error is encountered and the user is authenticated, display a user-friendly message explaining the situation and show an option to reset admin access rather than a dead-end error state.",
+      "files": [
+        "frontend/src/pages/Admin.tsx"
+      ],
+      "components": [
+        "blob-storage@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0",
+        "authorization@4.0.0"
+      ],
+      "testIds": [
+        "REQ-3"
       ],
       "confidence": "high"
     }

@@ -7,10 +7,11 @@ import MixinStorage "blob-storage/Mixin";
 import Nat "mo:core/Nat";
 import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
-
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   include MixinStorage();
 
@@ -20,6 +21,7 @@ actor {
   type ProductId = Nat;
   type Price = Float;
   type MediaUrl = Text;
+
   type Product = {
     id : ProductId;
     name : Text;
@@ -29,22 +31,26 @@ actor {
     category : Text;
     inventory : Nat;
   };
+
   type Category = {
     id : Nat;
     name : Text;
     slug : Text;
   };
+
   type Collection = {
     id : Nat;
     name : Text;
     description : Text;
     productIds : [ProductId];
   };
+
   type OrderItem = {
     productId : ProductId;
     quantity : Nat;
     price : Price;
   };
+
   type OrderStatus = {
     #pending;
     #confirmed;
@@ -52,11 +58,13 @@ actor {
     #delivered;
     #cancelled;
   };
+
   type PaymentMethod = {
     #COD;
     #UPI;
     #Card;
   };
+
   type Order = {
     orderId : Text;
     customerName : Text;
@@ -78,7 +86,6 @@ actor {
   };
 
   let userProfiles = Map.empty<Principal, UserProfile>();
-
   let products = Map.empty<ProductId, Product>();
   let categories = Map.empty<Nat, Category>();
   let collections = Map.empty<Nat, Collection>();
@@ -90,7 +97,6 @@ actor {
   var nextOrderId = 3;
 
   // User profile functions
-
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can get profiles");
@@ -113,8 +119,14 @@ actor {
   };
 
   // Product management (admin only)
-
-  public shared ({ caller }) func addProduct(name : Text, price : Price, image : MediaUrl, description : Text, category : Text, inventory : Nat) : async Product {
+  public shared ({ caller }) func addProduct(
+    name : Text,
+    price : Price,
+    image : MediaUrl,
+    description : Text,
+    category : Text,
+    inventory : Nat,
+  ) : async Product {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
@@ -132,7 +144,15 @@ actor {
     product;
   };
 
-  public shared ({ caller }) func updateProduct(id : ProductId, name : Text, price : Price, image : MediaUrl, description : Text, category : Text, inventory : Nat) : async Product {
+  public shared ({ caller }) func updateProduct(
+    id : ProductId,
+    name : Text,
+    price : Price,
+    image : MediaUrl,
+    description : Text,
+    category : Text,
+    inventory : Nat,
+  ) : async Product {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
@@ -165,7 +185,6 @@ actor {
   };
 
   // Category management (admin only)
-
   public shared ({ caller }) func addCategory(name : Text, slug : Text) : async Category {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
@@ -209,7 +228,6 @@ actor {
   };
 
   // Collection management (admin only)
-
   public shared ({ caller }) func addCollection(name : Text, description : Text) : async Collection {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
@@ -254,7 +272,10 @@ actor {
     collections.remove(id);
   };
 
-  public shared ({ caller }) func assignProductToCollection(collectionId : Nat, productId : ProductId) : async () {
+  public shared ({ caller }) func assignProductToCollection(
+    collectionId : Nat,
+    productId : ProductId,
+  ) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
@@ -268,7 +289,10 @@ actor {
     };
   };
 
-  public shared ({ caller }) func removeProductFromCollection(collectionId : Nat, productId : ProductId) : async () {
+  public shared ({ caller }) func removeProductFromCollection(
+    collectionId : Nat,
+    productId : ProductId,
+  ) : async () {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
     };
@@ -283,7 +307,6 @@ actor {
   };
 
   // Order management
-
   public shared ({ caller }) func createOrder(
     customerName : Text,
     mobileNumber : Text,
@@ -299,7 +322,6 @@ actor {
     if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
       Runtime.trap("Unauthorized: Only users can create orders");
     };
-
     let orderId = nextOrderId.toText();
     let order : Order = {
       orderId;
@@ -336,7 +358,6 @@ actor {
   };
 
   // Order queries (admin only)
-
   public query ({ caller }) func getOrderById(orderId : Text) : async ?Order {
     if (not (AccessControl.isAdmin(accessControlState, caller))) {
       Runtime.trap("Unauthorized: Only admins can perform this action");
@@ -362,7 +383,6 @@ actor {
   };
 
   // Product queries (public)
-
   public query func fetchProduct(id : ProductId) : async Product {
     switch (products.get(id)) {
       case (null) { Runtime.trap("Product does not exist!") };
@@ -385,7 +405,6 @@ actor {
   };
 
   // Category and collection queries (public)
-
   public query func getAllCategories() : async [Category] {
     categories.values().toArray();
   };

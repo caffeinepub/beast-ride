@@ -1,12 +1,13 @@
 import React from 'react';
 import { ClipboardList, Package, Tag, LogOut, LayoutDashboard } from 'lucide-react';
+import { useNavigate } from '@tanstack/react-router';
 import type { AdminSection } from '../pages/Admin';
 
 interface Props {
   activeSection: AdminSection;
   onSectionChange: (section: AdminSection) => void;
-  onLogout: () => void;
-  identity: { getPrincipal: () => { toString: () => string } } | null;
+  onLogout?: () => void;
+  identity?: { getPrincipal: () => { toString: () => string } } | null;
 }
 
 const navItems: { id: AdminSection; label: string; icon: React.ReactNode }[] = [
@@ -16,6 +17,17 @@ const navItems: { id: AdminSection; label: string; icon: React.ReactNode }[] = [
 ];
 
 export default function AdminSidebar({ activeSection, onSectionChange, onLogout, identity }: Props) {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear the simple session-based auth flag
+    sessionStorage.removeItem('adminAuthenticated');
+    // Call optional external logout handler (e.g., Internet Identity clear)
+    if (onLogout) onLogout();
+    // Redirect to admin login
+    navigate({ to: '/admin-login' });
+  };
+
   const principal = identity?.getPrincipal().toString() ?? '';
   const shortPrincipal = principal.length > 12
     ? `${principal.slice(0, 6)}...${principal.slice(-4)}`
@@ -119,7 +131,7 @@ export default function AdminSidebar({ activeSection, onSectionChange, onLogout,
           </p>
         )}
         <button
-          onClick={onLogout}
+          onClick={handleLogout}
           className="w-full flex items-center gap-2 px-3 py-2 transition-colors duration-200"
           style={{
             backgroundColor: 'transparent',

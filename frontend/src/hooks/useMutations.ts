@@ -1,7 +1,28 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
+import { useInternetIdentity } from './useInternetIdentity';
 import type { OrderItem } from '../backend';
-import { OrderStatus, PaymentMethod } from '../backend';
+import { OrderStatus, PaymentMethod, UserRole } from '../backend';
+
+export function useClaimAdminAccess() {
+  const { actor } = useActor();
+  const { identity } = useInternetIdentity();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async () => {
+      if (!actor) throw new Error('Actor not available');
+      if (!identity) throw new Error('Not authenticated');
+      const principal = identity.getPrincipal();
+      await actor.assignCallerUserRole(principal, UserRole.admin);
+    },
+    onSuccess: () => {
+      // Invalidate admin status and existence checks so UI refreshes
+      queryClient.invalidateQueries({ queryKey: ['isCallerAdmin'] });
+      queryClient.invalidateQueries({ queryKey: ['checkAdminsExist'] });
+    },
+  });
+}
 
 export function useUpdateOrderStatus() {
   const { actor } = useActor();
@@ -233,37 +254,46 @@ export function useRemoveProductFromCollection() {
   });
 }
 
-export interface CreateOrderParams {
-  customerName: string;
-  mobileNumber: string;
-  email: string;
-  fullAddress: string;
-  city: string;
-  state: string;
-  pincode: string;
-  paymentMethod: PaymentMethod;
-  items: Array<OrderItem>;
-  totalAmount: number;
-}
-
 export function useCreateOrder() {
   const { actor } = useActor();
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (params: CreateOrderParams) => {
+    mutationFn: async ({
+      customerName,
+      mobileNumber,
+      email,
+      fullAddress,
+      city,
+      state,
+      pincode,
+      paymentMethod,
+      items,
+      totalAmount,
+    }: {
+      customerName: string;
+      mobileNumber: string;
+      email: string;
+      fullAddress: string;
+      city: string;
+      state: string;
+      pincode: string;
+      paymentMethod: PaymentMethod;
+      items: OrderItem[];
+      totalAmount: number;
+    }) => {
       if (!actor) throw new Error('Actor not available');
       return actor.createOrder(
-        params.customerName,
-        params.mobileNumber,
-        params.email,
-        params.fullAddress,
-        params.city,
-        params.state,
-        params.pincode,
-        params.paymentMethod,
-        params.items,
-        params.totalAmount,
+        customerName,
+        mobileNumber,
+        email,
+        fullAddress,
+        city,
+        state,
+        pincode,
+        paymentMethod,
+        items,
+        totalAmount,
       );
     },
     onSuccess: () => {

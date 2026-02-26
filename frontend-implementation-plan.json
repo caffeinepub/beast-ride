@@ -1,46 +1,49 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Fix admin privilege access denied error",
+  "title": "Add admin principal reset functionality",
   "requirements": [
     {
       "id": "REQ-2",
-      "summary": "Ensure the frontend admin dashboard correctly passes the authenticated identity when calling admin-only backend methods and that actor is always authenticated (not anonymous) for admin queries",
+      "summary": "Add a 'Reset Admin Access' button on the Admin dashboard that calls the reset backend function and allows re-claiming admin access with a confirmation dialog",
       "acceptanceCriteria": [
-        "Admin queries and mutations are only triggered when the user is authenticated via Internet Identity.",
-        "The authenticated actor (not anonymous) is used for all admin panel API calls.",
-        "The admin panel displays orders, products, and categories successfully after login without authorization errors."
+        "A 'Reset Admin Access' button is visible in the admin dashboard UI.",
+        "Clicking the button shows a confirmation dialog warning the user that current admin access will be revoked.",
+        "On confirmation, the reset mutation is called and the current principal can immediately claim admin again.",
+        "Success and error states are communicated to the user via toast notifications.",
+        "The button is only shown when the user is authenticated via Internet Identity."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/useMutations.ts",
+          "operation": "modify",
+          "description": "Add a useResetAdminPrincipal mutation hook that calls the backend resetAdminPrincipal function and invalidates admin-related queries on success. The mutation should handle success/error states and return a mutate function for the UI to invoke."
+        },
+        {
+          "path": "frontend/src/pages/Admin.tsx",
+          "operation": "modify",
+          "description": "Add a 'Reset Admin Access' button in the admin dashboard UI (visible only when authenticated). On click, show a confirmation dialog warning the user that current admin access will be revoked. On confirmation, call the resetAdminPrincipal mutation, then immediately call claimAdminAccess mutation to re-claim admin with the current principal. Display toast notifications for success and error states. Position the button prominently in the dashboard header or sidebar area."
+        },
+        {
+          "path": "frontend/src/components/admin/ResetAdminDialog.tsx",
+          "operation": "create",
+          "description": "Create a reusable confirmation dialog component for the admin reset action. The dialog should display a warning message explaining that resetting will revoke current admin access and require re-claiming. Include 'Cancel' and 'Confirm Reset' buttons. Use shadcn/ui Dialog component primitives for consistent styling. Accept onConfirm and onCancel callbacks as props."
+        }
+      ]
+    },
+    {
+      "id": "REQ-3",
+      "summary": "Display a user-friendly message and reset option when the 'Admin access has already been claimed' error occurs on the Admin page",
+      "acceptanceCriteria": [
+        "When the claim-admin mutation returns an 'already claimed' error, the UI shows a clear explanation message.",
+        "A 'Reset Admin Access' action is presented inline on this error state.",
+        "The user is not stuck at a dead-end error with no recovery path."
       ],
       "file_operations": [
         {
           "path": "frontend/src/pages/Admin.tsx",
           "operation": "modify",
-          "description": "Verify that the component only renders the admin dashboard sections when the user is authenticated. Ensure that the actor used for all admin queries is the authenticated actor (not anonymous) by checking the identity state from useInternetIdentity. Add additional safety checks to prevent rendering admin content or triggering admin API calls when the user is not authenticated. Review the error handling to ensure authorization errors are displayed gracefully to the user."
-        },
-        {
-          "path": "frontend/src/components/admin/OrdersSection.tsx",
-          "operation": "modify",
-          "description": "Review the component to ensure that the getAllOrders query and updateOrderStatus mutation are only enabled when an authenticated actor is available. Verify that the actor passed to these hooks is the authenticated actor from useActor and that the hooks are disabled when the user is not authenticated. Add error handling for authorization failures that display user-friendly messages."
-        },
-        {
-          "path": "frontend/src/components/admin/ProductsSection.tsx",
-          "operation": "modify",
-          "description": "Review the component to ensure that getAllProducts query and product CRUD mutations (add, update, delete) are only enabled when an authenticated actor is available. Verify that the actor passed to these hooks is the authenticated actor from useActor and that the hooks are disabled when the user is not authenticated. Add error handling for authorization failures."
-        },
-        {
-          "path": "frontend/src/components/admin/CategoriesCollectionsSection.tsx",
-          "operation": "modify",
-          "description": "Review the component to ensure that category and collection queries (getAllCategories, getAllCollections) and CRUD mutations are only enabled when an authenticated actor is available. Verify that the actor passed to these hooks is the authenticated actor from useActor and that the hooks are disabled when the user is not authenticated. Add error handling for authorization failures that display user-friendly messages to the admin."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Review all admin-only query hooks (getAllOrders, getAllCategories, getAllCollections) to ensure they are only enabled when both an authenticated actor is available (!!actor) and the actor is not fetching (actorFetching is false). Verify that the enabled flag prevents queries from running with an anonymous actor. Consider adding explicit checks that the identity is present before enabling admin queries."
-        },
-        {
-          "path": "frontend/src/hooks/useMutations.ts",
-          "operation": "modify",
-          "description": "Review all admin-only mutation hooks (updateOrderStatus, addProduct, updateProduct, deleteProduct, addCategory, updateCategory, deleteCategory, addCollection, updateCollection, deleteCollection) to ensure they throw a clear error or are disabled when the actor is not available or is anonymous. Verify that mutations are called only after authentication is confirmed. Add error handling that catches backend authorization traps and displays user-friendly error messages."
+          "description": "Update the error handling logic for the claimAdminAccess mutation to detect 'Admin access has already been claimed' errors. When this specific error occurs and the user is authenticated, display a user-friendly explanation message (e.g., 'Admin access has already been claimed by another principal. You can reset admin access to reclaim it with your current identity.') and show the 'Reset Admin Access' button inline within the error state UI. Reuse the ResetAdminDialog component for the reset confirmation flow."
         }
       ]
     }
