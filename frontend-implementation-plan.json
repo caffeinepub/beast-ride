@@ -1,34 +1,6 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Reset admin access so first click after publish claims admin",
-  "requirements": [
-    {
-      "id": "REQ-2",
-      "summary": "Automatically prompt authenticated Internet Identity user to claim admin access on first load when no admin is set, allowing a single-click admin claim without errors",
-      "acceptanceCriteria": [
-        "When no admin is claimed, the Admin page shows a prominent 'Claim Admin Access' button to the authenticated Internet Identity user.",
-        "Clicking the button calls claimAdmin and grants admin access immediately.",
-        "After claiming, the user is taken directly to the admin dashboard without errors.",
-        "If admin is already claimed, the claim button is not shown and the normal admin dashboard is rendered."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Admin.tsx",
-          "operation": "modify",
-          "description": "Update the admin page to automatically check if admin is claimed on load when the user is authenticated with Internet Identity. If no admin is set (isCallerAdmin returns false), display a prominent 'Claim Admin Access' button that calls the claimAdmin mutation. After successful claiming, refresh the admin status and proceed to show the normal admin dashboard sections (orders, products, categories). If admin is already claimed, skip the claim flow and render the dashboard immediately. Remove any hardcoded admin check bypasses and ensure the flow handles both fresh deployments and existing admin scenarios. Use the authorization component's backend capability for isCallerAdmin checks."
-        },
-        {
-          "path": "frontend/src/hooks/useMutations.ts",
-          "operation": "modify",
-          "description": "Ensure the useClaimAdmin mutation hook is present and correctly calls the backend claimAdmin capability. The mutation should invalidate the 'isCallerAdmin' query key on success to trigger a refresh of admin status. Add proper error handling and success callbacks to support the admin claiming flow from the Admin page."
-        },
-        {
-          "path": "frontend/src/hooks/useQueries.ts",
-          "operation": "modify",
-          "description": "Ensure the useIsCallerAdmin query hook is present and correctly fetches admin status from the backend isCallerAdmin capability. The query should be enabled only when the actor is ready. This hook will be used by the Admin page to determine whether to show the claim button or the dashboard."
-        }
-      ]
-    }
-  ]
+  "title": "Publish project",
+  "requirements": []
 }

@@ -97,6 +97,7 @@ export interface _SERVICE {
   >,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
   'assignProductToCollection' : ActorMethod<[bigint, ProductId], undefined>,
+  'claimAdmin' : ActorMethod<[], undefined>,
   'createOrder' : ActorMethod<
     [
       string,

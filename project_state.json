@@ -1,50 +1,13 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "Web3/ICP app with admin role management. Admin access is principal ID-based; resetting admin so the deployer publishes and the user clicks to claim admin on first visit.",
-  "architectural_notes": [
-    "Admin access is principal ID-based; first user to click claim after deployment becomes admin"
-  ],
-  "known_issues": [
-    "Old admin principal ID persisted across deployments, blocking new admin claims"
-  ],
-  "isFixRequest": true,
-  "existing_features": [
-    {
-      "id": "feature-on-the-admin-page-after-the-backend-is-reset-automatically-prompt-the-authenticated-internet-identity-user-to-claim-admin-access-on-first-load-if-no-admin-is-set-the-user-should-be-able-to-click-a-single-claim-admin-access-button-and-immediately-receive-admin-privileges-without-any-intermediate-errors",
-      "title": "On the Admin page, after the backend is reset, automatically prompt the authenticated Internet Identity user to claim admin access on first load if no admin is set. The user should be able to click a single 'Claim Admin Access' button and immediately receive admin privileges without any intermediate errors.",
-      "reqIds": [
-        "REQ-2"
-      ],
-      "version": 1
-    }
-  ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Reset admin access so that after publish, user can claim admin on first click (no pre-existing admin blocking)",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Reset the persisted admin principal in the backend so that on every fresh deployment the admin slot starts as unclaimed. Remove any hardcoded or leftover admin principal from stable storage initialization, ensuring the actor initializes with no admin set.",
-      "reqIds": [
-        "REQ-1"
-      ],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Write a migration (backend/migration.mo) that clears any previously stored admin principal from stable state so that the upgrade results in a clean unclaimed admin slot, preventing old principal data from persisting across the deployment.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "status": "pending"
-    }
-  ],
-  "gameProjectType": "none",
-  "projectName": "Beast Ride Admin",
+  "summary": "New project",
+  "architectural_notes": [],
+  "known_issues": [],
+  "isFixRequest": false,
+  "existing_features": [],
+  "new_feature_requests": [],
+  "projectName": "Publish project",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

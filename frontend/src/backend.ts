@@ -176,6 +176,7 @@ export interface backendInterface {
     addProduct(name: string, price: Price, image: MediaUrl, description: string, category: string, inventory: bigint): Promise<Product>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     assignProductToCollection(collectionId: bigint, productId: ProductId): Promise<void>;
+    claimAdmin(): Promise<void>;
     createOrder(customerName: string, mobileNumber: string, email: string, fullAddress: string, city: string, state: string, pincode: string, paymentMethod: PaymentMethod, items: Array<OrderItem>, totalAmount: Price): Promise<Order>;
     deleteCategory(id: bigint): Promise<void>;
     deleteCollection(id: bigint): Promise<void>;
@@ -368,6 +369,20 @@ export class Backend implements backendInterface {
             }
         } else {
             const result = await this.actor.assignProductToCollection(arg0, arg1);
+            return result;
+        }
+    }
+    async claimAdmin(): Promise<void> {
+        if (this.processError) {
+            try {
+                const result = await this.actor.claimAdmin();
+                return result;
+            } catch (e) {
+                this.processError(e);
+                throw new Error("unreachable");
+            }
+        } else {
+            const result = await this.actor.claimAdmin();
             return result;
         }
     }

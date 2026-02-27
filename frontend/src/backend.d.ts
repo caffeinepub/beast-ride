@@ -76,6 +76,7 @@ export interface backendInterface {
     addProduct(name: string, price: Price, image: MediaUrl, description: string, category: string, inventory: bigint): Promise<Product>;
     assignCallerUserRole(user: Principal, role: UserRole): Promise<void>;
     assignProductToCollection(collectionId: bigint, productId: ProductId): Promise<void>;
+    claimAdmin(): Promise<void>;
     createOrder(customerName: string, mobileNumber: string, email: string, fullAddress: string, city: string, state: string, pincode: string, paymentMethod: PaymentMethod, items: Array<OrderItem>, totalAmount: Price): Promise<Order>;
     deleteCategory(id: bigint): Promise<void>;
     deleteCollection(id: bigint): Promise<void>;

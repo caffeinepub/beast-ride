@@ -9,9 +9,7 @@ import Iter "mo:core/Iter";
 import Principal "mo:core/Principal";
 import MixinAuthorization "authorization/MixinAuthorization";
 import AccessControl "authorization/access-control";
-import Migration "migration";
 
-(with migration = Migration.run)
 actor {
   include MixinStorage();
 
@@ -95,6 +93,23 @@ actor {
   var nextCategoryId = 3;
   var nextCollectionId = 2;
   var nextOrderId = 3;
+
+  // Track whether an admin has been initialized
+  var adminInitialized = false;
+
+  // Allow any authenticated (non-anonymous) user to claim admin only when no admin exists yet.
+  // Once an admin exists, this function traps to prevent unauthorized role escalation.
+  public shared ({ caller }) func claimAdmin() : async () {
+    if (caller.isAnonymous()) {
+      Runtime.trap("Unauthorized: Anonymous principals cannot claim admin");
+    };
+    if (adminInitialized) {
+      Runtime.trap("Admin already exists. Only admins can assign user roles");
+    };
+    // No admin exists yet — allow caller to become admin unconditionally
+    AccessControl.initialize(accessControlState, caller, "", ""); // Satisfy all parameters for default admin
+    adminInitialized := true;
+  };
 
   // User profile functions
   public query ({ caller }) func getCallerUserProfile() : async ?UserProfile {
@@ -417,4 +432,3 @@ actor {
     collections.get(id);
   };
 };
-

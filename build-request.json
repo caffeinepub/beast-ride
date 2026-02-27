@@ -1,74 +1,10 @@
 {
   "kind": "build_request",
-  "title": "Reset admin access so first click after publish claims admin",
-  "projectName": "Beast Ride Admin",
-  "priority": "high",
-  "requirements": [
-    {
-      "id": "REQ-1",
-      "text": "Reset the persisted admin principal in the backend so that on every fresh deployment the admin slot starts as unclaimed. Remove any hardcoded or leftover admin principal from stable storage initialization, ensuring the actor initializes with no admin set.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-recent-1"
-        ],
-        "quotes": [
-          "reset admin acces and set like this oyu publish and i ckick and i get admin acces"
-        ]
-      },
-      "acceptanceCriteria": [
-        "After a fresh deployment, the backend reports no admin is currently set (isAdminClaimed returns false / null principal).",
-        "The first user to call claimAdmin after deployment is granted admin without any 'already claimed' error.",
-        "No previously persisted admin principal blocks the new claim."
-      ]
-    },
-    {
-      "id": "REQ-2",
-      "text": "On the Admin page, after the backend is reset, automatically prompt the authenticated Internet Identity user to claim admin access on first load if no admin is set. The user should be able to click a single 'Claim Admin Access' button and immediately receive admin privileges without any intermediate errors.",
-      "target": "frontend",
-      "source": {
-        "messageIds": [
-          "msg-recent-1"
-        ],
-        "quotes": [
-          "you publish and i click and i get admin access"
-        ]
-      },
-      "acceptanceCriteria": [
-        "When no admin is claimed, the Admin page shows a prominent 'Claim Admin Access' button to the authenticated Internet Identity user.",
-        "Clicking the button calls claimAdmin and grants admin access immediately.",
-        "After claiming, the user is taken directly to the admin dashboard without errors.",
-        "If admin is already claimed, the claim button is not shown and the normal admin dashboard is rendered."
-      ]
-    },
-    {
-      "id": "REQ-3",
-      "text": "Write a migration (backend/migration.mo) that clears any previously stored admin principal from stable state so that the upgrade results in a clean unclaimed admin slot, preventing old principal data from persisting across the deployment.",
-      "target": "backend",
-      "source": {
-        "messageIds": [
-          "msg-recent-1"
-        ],
-        "quotes": [
-          "reset admin acces"
-        ]
-      },
-      "acceptanceCriteria": [
-        "After running the canister upgrade with the migration, the stored admin principal is null/empty.",
-        "No stale admin principal from previous versions blocks a new admin claim."
-      ]
-    }
-  ],
-  "constraints": [
-    "Do not hardcode any specific principal ID as admin — admin must always be claimable by the first user after deployment.",
-    "Do not modify files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or frontend/src/components/ui.",
-    "Keep all backend logic in the single main actor (backend/main.mo)."
-  ],
-  "nonGoals": [
-    "Adding a username/password login flow.",
-    "Restricting which principal IDs can claim admin.",
-    "Any changes to product, category, order, or collection logic."
-  ],
+  "title": "Publish project",
+  "priority": "normal",
+  "requirements": [],
+  "constraints": [],
+  "nonGoals": [],
   "imageRequirements": {
     "required": [],
     "edits": []

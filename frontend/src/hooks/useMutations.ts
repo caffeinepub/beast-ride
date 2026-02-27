@@ -1,20 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useActor } from './useActor';
-import { useInternetIdentity } from './useInternetIdentity';
 import type { OrderItem } from '../backend';
-import { OrderStatus, PaymentMethod, UserRole } from '../backend';
+import { OrderStatus, PaymentMethod } from '../backend';
 
 export function useClaimAdminAccess() {
   const { actor } = useActor();
-  const { identity } = useInternetIdentity();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async () => {
       if (!actor) throw new Error('Actor not available');
-      if (!identity) throw new Error('Not authenticated');
-      const principal = identity.getPrincipal();
-      await actor.assignCallerUserRole(principal, UserRole.admin);
+      await actor.claimAdmin();
     },
     onSuccess: () => {
       // Invalidate admin status and existence checks so UI refreshes

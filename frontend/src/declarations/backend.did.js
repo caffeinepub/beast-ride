@@ -118,6 +118,7 @@ export const idlService = IDL.Service({
     ),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
   'assignProductToCollection' : IDL.Func([IDL.Nat, ProductId], [], []),
+  'claimAdmin' : IDL.Func([], [], []),
   'createOrder' : IDL.Func(
       [
         IDL.Text,
@@ -283,6 +284,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
     'assignProductToCollection' : IDL.Func([IDL.Nat, ProductId], [], []),
+    'claimAdmin' : IDL.Func([], [], []),
     'createOrder' : IDL.Func(
         [
           IDL.Text,

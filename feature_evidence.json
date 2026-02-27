@@ -1,25 +1,4 @@
 {
   "kind": "feature_evidence_report",
-  "features": [
-    {
-      "featureId": "feature-on-the-admin-page-after-the-backend-is-reset-automatically-prompt-the-authenticated-internet-identity-user-to-claim-admin-access-on-first-load-if-no-admin-is-set-the-user-should-be-able-to-click-a-single-claim-admin-access-button-and-immediately-receive-admin-privileges-without-any-intermediate-errors",
-      "featureTitle": "On the Admin page, after the backend is reset, automatically prompt the authenticated Internet Identity user to claim admin access on first load if no admin is set. The user should be able to click a single 'Claim Admin Access' button and immediately receive admin privileges without any intermediate errors.",
-      "files": [
-        "frontend/src/pages/Admin.tsx"
-      ],
-      "components": [
-        "blob-storage@4.0.0",
-        "core-infrastructure@1.0.2",
-        "shadcn-ui@1.0.0",
-        "build-template-react@1.0.0",
-        "initial-app@1.0.0",
-        "github-export-icp-cli@1.0.0",
-        "authorization@4.0.0"
-      ],
-      "testIds": [
-        "REQ-2"
-      ],
-      "confidence": "high"
-    }
-  ]
+  "features": []
 }
